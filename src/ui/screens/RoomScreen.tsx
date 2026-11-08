@@ -170,7 +170,8 @@ export function RoomScreen() {
               class="px actor"
               src={wizUrl}
               alt=""
-              style={{ left: `${(WIZARD_SPOT.x - WIZ.headX) * S}px`, top: `${(WIZARD_SPOT.y - WIZ.feetY - WIZ.padTop) * S}px`, width: `${(WIZ_CANVAS.w + 16) * S}px`, zIndex: 2000 + WIZARD_SPOT.y }}
+              // Flipped so the wizard faces into the room.
+              style={{ transform: 'scaleX(-1)', left: `${(WIZARD_SPOT.x - (WIZ_CANVAS.w + 16 - WIZ.headX)) * S}px`, top: `${(WIZARD_SPOT.y - WIZ.feetY - WIZ.padTop) * S}px`, width: `${(WIZ_CANVAS.w + 16) * S}px`, zIndex: 2000 + WIZARD_SPOT.y }}
             />
           )}
           {sel && !drag && (
