@@ -1,0 +1,30 @@
+{
+  "style": false,
+  "prompt": "Animation frames for a pixel art game, made from the reference image. Use EXACTLY the same bulldog character design, colors, outline, pixel size and size as the reference. Two rows of three frames on a flat magenta (#FF00FF) background, every frame the same size, the same scale and facing LEFT like the reference, with lots of empty space between frames. Row 1: the GRUMPY bulldog (left in the reference), a 3-frame idle loop: growling and shaking its head. Frame 1 is the reference pose, frames 2 and 3 change only a little. Row 2: the HAPPY bulldog (right in the reference), a 3-frame idle loop: wagging its tail with its tongue out. Frame 1 is the reference pose, frames 2 and 3 change only a little. No text, no shadows, no new objects.",
+  "aspect": "16:9",
+  "reference": [
+    "ref-bulldog"
+  ],
+  "category": "creatures",
+  "scale": 4,
+  "merge": 1,
+  "cells": [
+    "bulldog-grumpy",
+    "bulldog-grumpy-2",
+    "bulldog-grumpy-3",
+    "bulldog-happy",
+    "bulldog-happy-2",
+    "bulldog-happy-3"
+  ],
+  "fit": {
+    "cells": [
+      0,
+      3
+    ],
+    "height": 68
+  },
+  "grid": [
+    2,
+    3
+  ]
+}

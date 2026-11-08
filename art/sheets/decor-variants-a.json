@@ -1,0 +1,28 @@
+{
+  "prompt": "Sixteen small tabletop decorations in four rows of four. They are color variations of classic cozy items: blue and white candles on a plate, pink teapot with a cup, pot of yellow flowers, stack of blue and purple books, pink rubber duck, snow globe with a tiny castle, blue potion bottle with a star, jar of green glowing fireflies, green crystal ball on a stand, hourglass with blue sand, music box with a heart, blue and white toy rocket, potted cactus with a sleepy face, pot of purple flowers, stack of red and green books, tiny teapot shaped like a mushroom.",
+  "aspect": "1:1",
+  "reference": [
+    "decor-a"
+  ],
+  "category": "decor",
+  "scale": 7,
+  "merge": 1,
+  "cells": [
+    "candles-blue",
+    "teapot-pink",
+    "flowers-yellow",
+    "books-blue",
+    "duck-pink",
+    "snow-globe-castle",
+    "star-potion",
+    "firefly-jar-green",
+    "crystal-ball-green",
+    "hourglass-blue",
+    "music-box-wood",
+    "rocket-blue",
+    "cactus-sleepy",
+    "flowers-purple",
+    "books-red",
+    "mushroom-teapot"
+  ]
+}

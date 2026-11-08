@@ -1,0 +1,28 @@
+{
+  "prompt": "Sixteen small potted plants and flowers for a cozy room, in four rows of four, each sitting in its own pot or vase: three little succulents in a tray, tall snake plant, sunflower in a pot, red tulips in a pot, tiny bonsai tree, monstera plant, small fern, roses in a glass vase, daisies in a jug, lavender in a pot, white orchid, lucky bamboo in a bowl, herb box with basil, cactus with a pink flower, tiny pine tree in a pot, purple violets in a teacup.",
+  "aspect": "1:1",
+  "reference": [
+    "decor-a"
+  ],
+  "category": "decor",
+  "scale": 7,
+  "merge": 1,
+  "cells": [
+    "succulents",
+    "snake-plant",
+    "sunflower",
+    "tulips",
+    "bonsai",
+    "monstera",
+    "small-fern",
+    "roses",
+    "daisies",
+    "lavender",
+    "orchid",
+    "bamboo",
+    "herb-box",
+    "cactus-flower",
+    "tiny-pine",
+    "violets"
+  ]
+}

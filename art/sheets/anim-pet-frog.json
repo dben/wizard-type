@@ -1,0 +1,39 @@
+{
+  "style": false,
+  "prompt": "Animation frames for a pixel art game, made from the reference image. Use EXACTLY the same frog design, colors, outline, pixel size and outfits as the reference. Four rows of four frames on a flat magenta (#FF00FF) background, every frame the same scale and facing RIGHT, with empty space between frames. In every row, frame 1 is the frog SITTING exactly like the reference, and frames 2, 3 and 4 are a hopping cycle (crouch, leap through the air, land), moving to the right. Row 1: the frog plain, no clothes. Row 2: the frog wearing the scarf from the reference. Row 3: the frog wearing the tiny wizard hat from the reference. Row 4: the frog wearing the flower crown from the reference. No text, no shadows, no ground, no new objects.",
+  "aspect": "1:1",
+  "reference": [
+    "ref-pet-frog"
+  ],
+  "category": "pets",
+  "scale": 4,
+  "merge": 0,
+  "cells": [
+    "frog-plain",
+    "frog-plain-walk-1",
+    "frog-plain-walk-2",
+    "frog-plain-walk-3",
+    "frog-scarf",
+    "frog-scarf-walk-1",
+    "frog-scarf-walk-2",
+    "frog-scarf-walk-3",
+    "frog-hat",
+    "frog-hat-walk-1",
+    "frog-hat-walk-2",
+    "frog-hat-walk-3",
+    "frog-flowers",
+    "frog-flowers-walk-1",
+    "frog-flowers-walk-2",
+    "frog-flowers-walk-3"
+  ],
+  "fit": {
+    "cells": [
+      0
+    ],
+    "height": 47
+  },
+  "grid": [
+    4,
+    4
+  ]
+}

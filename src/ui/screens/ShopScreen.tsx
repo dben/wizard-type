@@ -17,6 +17,7 @@ const TABS: { cat: ItemCategory; label: string }[] = [
   { cat: 'decor', label: 'Little things' },
   { cat: 'wall', label: 'Wall' },
   { cat: 'rug', label: 'Rugs' },
+  { cat: 'window', label: 'Windows' },
 ];
 
 const WEAR: Partial<Record<ItemCategory, 'hat' | 'robe' | 'wand' | 'pet'>> = { hat: 'hat', robe: 'robe', wand: 'wand', pet: 'pet' };

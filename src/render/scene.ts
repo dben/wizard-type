@@ -9,6 +9,8 @@ import type { LessonDef, TargetDef } from '../content/types';
 import { item } from '../content/items';
 import { LOCATIONS, type LocationDef } from '../content/world/locations';
 import type { Placement } from '../game/save';
+import { WINDOW_SPOT, clutterFor, type StoryClutter } from '../content/world/room';
+import { idleFrame, IDLE, petMotion } from '../content/world/animations';
 import { createRng } from '../game/rng';
 import { loadSprite, preload, sprite } from './sprites';
 import { WIZ, WIZ_CANVAS } from './wizard';
@@ -53,6 +55,10 @@ export interface SceneSetup {
   pet: string | null;
   sparkle: string;
   room?: Placement[];
+  /** Tower only: the big window's sprite once it's fixed. */
+  windowSprite?: string | null;
+  /** Tower only: mess that isn't part of this lesson, drawn greyed out. */
+  clutter?: StoryClutter[];
 }
 
 const SPARKS = ['#fff7b0', '#ffe066', '#ffffff', '#b8f2ff'];
@@ -93,12 +99,18 @@ export class LessonScene {
     const n = defs.length;
     const base = Math.floor(this.setup.spells / n);
     const extra = this.setup.spells % n;
+    // In the tower, each target stands where its mess is in the room.
+    const spots = this.loc.indoor ? clutterFor(this.setup.lesson.id) : [];
     this.targets = defs.map((def, i) => {
       let x: number;
-      if (this.loc.indoor) x = n === 1 ? 340 : Math.round(230 + ((i + 0.5) * 210) / n);
+      let y = GROUND;
+      if (spots[i]) {
+        x = spots[i].x;
+        y = spots[i].y + ROOM_SHIFT;
+      } else if (this.loc.indoor) x = n === 1 ? 340 : Math.round(230 + ((i + 0.5) * 210) / n);
       else x = FIRST_TARGET_X + i * TARGET_GAP;
       return {
-        def, x, y: def.onWall ? 112 : GROUND, need: base + (i < extra ? 1 : 0),
+        def, x, y, need: base + (i < extra ? 1 : 0),
         hits: 0, done: false, vanish: 0, shake: 0, hop: 0, leave: 0,
       };
     });
@@ -119,9 +131,11 @@ export class LessonScene {
     const s = this.setup;
     const paths = [
       ...this.props.far.map((p) => p.s), ...this.props.near.map((p) => p.s),
-      ...s.lesson.scene.targets.flatMap((t) => [t.sprite, t.done, t.helper].filter(Boolean) as string[]),
-      s.wand, ...(s.pet ? [s.pet] : []), ...(s.lesson.scene.npc ? [s.lesson.scene.npc] : []),
-      ...(this.loc.indoor ? ['backgrounds/tower', ...(s.room ?? []).map((p) => item(p.item)?.sprite ?? '')] : []),
+      ...s.lesson.scene.targets.flatMap((t) => [t.sprite, t.done, t.helper].filter(Boolean) as string[]).flatMap((p) => IDLE[p]?.frames ?? [p]),
+      s.wand, ...(s.pet ? [s.pet, ...(petMotion(s.pet)?.move ?? [])] : []), ...(s.lesson.scene.npc ? [s.lesson.scene.npc] : []),
+      ...(this.loc.indoor
+        ? ['backgrounds/tower', s.windowSprite ?? '', ...(s.clutter ?? []).map((c) => c.sprite), ...(s.room ?? []).map((p) => item(p.item)?.sprite ?? '')]
+        : []),
       ...(this.loc.river ? ['props/bridge'] : []),
     ].filter(Boolean);
     await preload(paths).catch(() => undefined);
@@ -298,11 +312,19 @@ export class LessonScene {
       c.fillStyle = '#7a6a66';
       c.fillRect(0, 0, VIEW_W, VIEW_H);
     }
+    const windowIsTarget = this.targets.some((t) => t.def.sprite.startsWith('windows/'));
+    if (this.setup.windowSprite && !windowIsTarget) this.drawSprite(this.setup.windowSprite, WINDOW_SPOT.x, WINDOW_SPOT.y + ROOM_SHIFT, {});
     const room = [...(this.setup.room ?? [])].sort((a, b) => layer(a) - layer(b) || a.y - b.y);
     for (const p of room) {
       const it = item(p.item);
       if (it?.sprite) this.drawSprite(it.sprite, p.x, p.y + ROOM_SHIFT, { flip: p.flip });
     }
+    // Other unfinished mess, greyed out: it belongs to other lessons.
+    c.save();
+    c.filter = 'grayscale(1) brightness(0.85)';
+    c.globalAlpha = 0.55;
+    for (const m of this.setup.clutter ?? []) this.drawSprite(m.sprite, m.x, m.y + ROOM_SHIFT, {});
+    c.restore();
   }
 
   private drawOutdoors() {
@@ -368,7 +390,7 @@ export class LessonScene {
     const battle = this.setup.lesson.scene.mode === 'battle';
     if (t.vanish >= 1) return;
     const landed = this.countLanded(t);
-    const s = t.done && t.def.done ? t.def.done : t.def.sprite;
+    const s = idleFrame(t.done && t.def.done ? t.def.done : t.def.sprite, this.time, t.x * 0.37);
     let x = t.x - this.camX + (t.shake > 0 ? Math.round(Math.sin(this.time * 70) * 2 * t.shake) : 0);
     const y = t.y - Math.round(Math.sin(t.hop * Math.PI) * 8);
     if (battle && this.celebrating) x += Math.round(Math.sin(this.time * 3) * 2);
@@ -412,8 +434,15 @@ export class LessonScene {
     const left = WIZ_X - WIZ.headX;
 
     if (this.setup.pet) {
-      const hop = walking ? Math.round(Math.abs(Math.sin(this.time * 9 + 1)) * 4) : (Math.sin(this.time * 1.3) > 0.97 ? 3 : 0);
-      this.drawSprite(this.setup.pet, WIZ_X - 52, GROUND - hop - Math.round(jump / 2), {});
+      // Sit while the wizard casts; walk, hop or fly along when the wizard walks.
+      const motion = petMotion(this.setup.pet);
+      let frame = this.setup.pet;
+      let lift = Math.sin(this.time * 1.3) > 0.97 ? 3 : 0;
+      if (walking && motion) {
+        frame = motion.move[Math.floor(this.time * motion.fps) % motion.move.length];
+        lift = motion.style === 'fly' ? 16 + Math.round(Math.sin(this.time * 6) * 3) : motion.style === 'hop' ? Math.round(Math.abs(Math.sin(this.time * 6)) * 6) : 0;
+      }
+      this.drawSprite(frame, WIZ_X - 52, GROUND - lift - Math.round(jump / 2), {});
     }
     c.fillStyle = 'rgba(0,0,0,0.15)';
     c.fillRect(WIZ_X - 22, GROUND - 2, 44, 3);
@@ -531,7 +560,7 @@ const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const rand = (a: number, b: number) => a + Math.random() * (b - a);
 const pick = <T,>(l: T[]) => l[Math.floor(Math.random() * l.length)];
 const mod = (a: number, n: number) => ((a % n) + n) % n;
-const LAYERS: Record<string, number> = { rug: 0, wall: 1, furniture: 2, decor: 3 };
+const LAYERS: Record<string, number> = { window: 0, rug: 0, wall: 1, furniture: 2, decor: 3 };
 export const layer = (p: Placement) => LAYERS[item(p.item)?.category ?? 'decor'] ?? 3;
 
 function hazeOf(color: string) {

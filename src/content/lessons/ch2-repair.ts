@@ -55,7 +55,7 @@ export const chapter2: ChapterDef = {
       newKeys: ['w', 'o'],
       intro: 'W and O. Let the sun in!',
       outro: 'Sunshine!',
-      scene: { location: 'tower', mode: 'help', targets: [{ sprite: 'fixtures/window-broken', done: 'fixtures/window-fixed', onWall: true }] },
+      scene: { location: 'tower', mode: 'help', targets: [{ sprite: 'windows/broken', done: 'windows/meadow' }] },
       recipes: [
         { kind: 'keys', count: 3, keys: 'wo', size: [1, 2], groups: [1, 2] },
         { kind: 'words', count: 6 },

@@ -1,0 +1,39 @@
+{
+  "style": false,
+  "prompt": "Animation frames for a pixel art game, made from the reference image. Use EXACTLY the same owl design, colors, outline, pixel size and outfits as the reference. Four rows of four frames on a flat magenta (#FF00FF) background, every frame the same scale and facing RIGHT, with empty space between frames. In every row, frame 1 is the owl SITTING exactly like the reference, and frames 2, 3 and 4 are FLYING to the right with wings spread wide: frame 2 wings UP, frame 3 wings LEVEL, frame 4 wings DOWN, body tilted forward, feet tucked in. Row 1: the owl plain, no clothes. Row 2: the owl wearing the scarf from the reference. Row 3: the owl wearing the tiny wizard hat from the reference. Row 4: the owl wearing the flower crown from the reference. No text, no shadows, no ground, no new objects.",
+  "aspect": "1:1",
+  "reference": [
+    "ref-pet-owl"
+  ],
+  "category": "pets",
+  "scale": 4,
+  "merge": 0,
+  "cells": [
+    "owl-plain",
+    "owl-plain-walk-1",
+    "owl-plain-walk-2",
+    "owl-plain-walk-3",
+    "owl-scarf",
+    "owl-scarf-walk-1",
+    "owl-scarf-walk-2",
+    "owl-scarf-walk-3",
+    "owl-hat",
+    "owl-hat-walk-1",
+    "owl-hat-walk-2",
+    "owl-hat-walk-3",
+    "owl-flowers",
+    "owl-flowers-walk-1",
+    "owl-flowers-walk-2",
+    "owl-flowers-walk-3"
+  ],
+  "fit": {
+    "cells": [
+      0
+    ],
+    "height": 42
+  },
+  "grid": [
+    4,
+    4
+  ]
+}

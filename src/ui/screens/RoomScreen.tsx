@@ -8,14 +8,17 @@ import { currentProfile, go, update } from '../../app/store';
 import { lessonInfo } from '../../content/curriculum';
 import { item } from '../../content/items';
 import type { ItemCategory, ItemDef } from '../../content/types';
-import { FLOOR_TOP, ROOM_H, ROOM_W, type StoryClutter } from '../../content/world/room';
-import { roomClutter } from '../../game/progress';
+import { FLOOR_TOP, PET_SPOT, ROOM_H, ROOM_W, WINDOW_SPOT, WIZARD_SPOT, type StoryClutter } from '../../content/world/room';
+import { chooseWindow, isDone, roomClutter, windowSprite } from '../../game/progress';
 import type { Placement } from '../../game/save';
 import { layer } from '../../render/scene';
 import { loadSprite, sprite, spriteUrl } from '../../render/sprites';
 import { portraitUrl } from '../../render/portrait';
 import { WIZ, WIZ_CANVAS } from '../../render/wizard';
 import { Sprite } from '../components/Sprite';
+import { RoomPet } from '../components/RoomPet';
+import { useIdleFrame } from '../components/useAnim';
+import { IDLE, petMotion } from '../../content/world/animations';
 import { Button } from '../components/bits';
 
 const TABS: { cat: ItemCategory; label: string }[] = [
@@ -23,7 +26,16 @@ const TABS: { cat: ItemCategory; label: string }[] = [
   { cat: 'decor', label: 'Little things' },
   { cat: 'wall', label: 'Wall' },
   { cat: 'rug', label: 'Rugs' },
+  { cat: 'window', label: 'Window' },
 ];
+
+/** A curved "turn around" arrow for the flip button. */
+const FlipIcon = () => (
+  <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+    <path d="M17 7.5A7 7 0 1 0 19 13" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+    <path d="M13.5 6.5 19 3.5l.6 6.2z" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
+  </svg>
+);
 
 const DEFAULT_Y: Record<string, number> = { rug: 252, furniture: 246, wall: 130, decor: 200 };
 
@@ -50,12 +62,17 @@ export function RoomScreen() {
   const box = useRef<HTMLDivElement>(null);
   const dragStart = useRef<{ px: number; py: number; x: number; y: number } | null>(null);
 
-  const owned = p.owned.map(item).filter((i): i is ItemDef => !!i && ['furniture', 'decor', 'wall', 'rug'].includes(i.category));
+  const owned = p.owned.map(item).filter((i): i is ItemDef => !!i && ['furniture', 'decor', 'wall', 'rug', 'window'].includes(i.category));
   const clutter = roomClutter(p);
+  const win = windowSprite(p);
 
   useEffect(() => {
-    const paths = [...owned.map((i) => i.sprite!), ...clutter.map((c) => c.sprite), 'backgrounds/tower'];
-    if (p.equipped.pet) paths.push(item(p.equipped.pet)!.sprite!);
+    const paths = [...owned.map((i) => i.sprite!), ...clutter.map((c) => c.sprite), 'backgrounds/tower', ...(win ? [win] : [])];
+    if (p.equipped.pet) {
+      const pet = item(p.equipped.pet)!.sprite!;
+      paths.push(pet, ...(petMotion(pet)?.move ?? []));
+    }
+    paths.push(...clutter.flatMap((c) => IDLE[c.sprite]?.frames ?? []));
     void Promise.all(paths.map((s) => loadSprite(s).catch(() => undefined))).then(() => setReady(true));
     void portraitUrl(p.look, p.equipped).then(setWizUrl);
   }, []);
@@ -75,6 +92,10 @@ export function RoomScreen() {
   const save = (room: Placement[]) => update((x) => ({ ...x, room }));
 
   const place = (it: ItemDef) => {
+    if (it.category === 'window') {
+      sfx.click();
+      return update((x) => chooseWindow(x, it.id));
+    }
     const existing = p.room.find((r) => r.item === it.id);
     if (existing) return setSelected(existing.uid);
     const [x, y] = clamp(it, ROOM_W / 2, DEFAULT_Y[it.category] ?? 220);
@@ -121,6 +142,7 @@ export function RoomScreen() {
       <div class="room-box" ref={box}>
         <div class="room" style={{ width: `${ROOM_W * S}px`, height: `${ROOM_H * S}px` }} onPointerDown={() => (setSelected(null), setHint(null))}>
           <img class="px room-bg" src={spriteUrl('backgrounds/tower')} alt="" draggable={false} />
+          {ready && win && <img class="px clutter" src={spriteUrl(win)} alt="" draggable={false} style={{ ...at(win, WINDOW_SPOT.x, WINDOW_SPOT.y), zIndex: 900, pointerEvents: 'none' }} />}
           {ready && sorted.map((pl) => {
             const it = item(pl.item);
             if (!it?.sprite) return null;
@@ -139,21 +161,23 @@ export function RoomScreen() {
               />
             );
           })}
-          {ready && clutter.map((c) => <ClutterImg key={c.sprite + c.x} c={c} S={S} style={at(c.sprite, c.x, c.y)} onHint={setHint} />)}
+          {ready && clutter.map((c) => <ClutterImg key={c.sprite + c.x} c={c} S={S} at={at} onHint={setHint} />)}
           {ready && p.equipped.pet && (
-            <img class="px actor" src={spriteUrl(item(p.equipped.pet)!.sprite!)} alt="" style={{ ...at(item(p.equipped.pet)!.sprite!, 330, 262), zIndex: 2262 }} />
+            <RoomPet key={p.equipped.pet} path={item(p.equipped.pet)!.sprite!} startX={PET_SPOT.x} floorY={PET_SPOT.y} scale={S} />
           )}
           {wizUrl && (
             <img
               class="px actor"
               src={wizUrl}
               alt=""
-              style={{ left: `${(395 - WIZ.headX) * S}px`, top: `${(264 - WIZ.feetY - WIZ.padTop) * S}px`, width: `${(WIZ_CANVAS.w + 16) * S}px`, zIndex: 2264 }}
+              style={{ left: `${(WIZARD_SPOT.x - WIZ.headX) * S}px`, top: `${(WIZARD_SPOT.y - WIZ.feetY - WIZ.padTop) * S}px`, width: `${(WIZ_CANVAS.w + 16) * S}px`, zIndex: 2000 + WIZARD_SPOT.y }}
             />
           )}
           {sel && !drag && (
             <div class="item-tools" style={{ left: `${pos(sel).x * S}px`, top: `${(pos(sel).y - (sprite(item(sel.item)!.sprite!)?.height ?? 30)) * S - 8}px` }} onPointerDown={(e) => e.stopPropagation()}>
-              <button onClick={() => save(p.room.map((r) => (r.uid === sel.uid ? { ...r, flip: !r.flip } : r)))} title="Flip">↔</button>
+              <button onClick={() => save(p.room.map((r) => (r.uid === sel.uid ? { ...r, flip: !r.flip } : r)))} title="Turn around">
+                <FlipIcon />
+              </button>
               <button onClick={() => (save(p.room.filter((r) => r.uid !== sel.uid)), setSelected(null))} title="Put away">✕</button>
             </div>
           )}
@@ -177,13 +201,14 @@ export function RoomScreen() {
           </Button>
         </div>
         <div class="tray-items">
-          {owned.filter((i) => i.category === tab).length === 0 && (
+          {tab === 'window' && !isDone(p, 'fix-window') && <p class="small muted">Fix the window first! (Lesson {(lessonInfo('fix-window')?.index ?? 0) + 1})</p>}
+          {tab !== 'window' && owned.filter((i) => i.category === tab).length === 0 && (
             <p class="small muted">Nothing yet. Finish lessons and visit the shop!</p>
           )}
           {owned
             .filter((i) => i.category === tab)
             .map((it) => {
-              const placed = p.room.some((r) => r.item === it.id);
+              const placed = it.category === 'window' ? p.window === it.id : p.room.some((r) => r.item === it.id);
               return (
                 <button key={it.id} class={`tray-item ${placed ? 'placed' : ''}`} onClick={() => place(it)} title={it.name}>
                   <Sprite path={it.sprite!} fit={56} />
@@ -198,15 +223,16 @@ export function RoomScreen() {
   );
 }
 
-function ClutterImg({ c, S, style, onHint }: { c: StoryClutter; S: number; style: Record<string, string>; onHint: (h: { x: number; y: number; text: string }) => void }) {
+function ClutterImg({ c, S, at, onHint }: { c: StoryClutter; S: number; at: (path: string, x: number, y: number) => Record<string, string>; onHint: (h: { x: number; y: number; text: string }) => void }) {
   const info = lessonInfo(c.until);
+  const frame = useIdleFrame(c.sprite, c.x);
   return (
     <img
       class="px clutter"
-      src={spriteUrl(c.sprite)}
+      src={spriteUrl(frame)}
       alt=""
       draggable={false}
-      style={{ ...style, zIndex: 2000 + c.y }}
+      style={{ ...at(frame, c.x, c.y), zIndex: 2000 + c.y }}
       onPointerDown={(e) => {
         e.stopPropagation();
         sfx.oops();

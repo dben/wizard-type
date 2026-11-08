@@ -26,10 +26,10 @@ describe('scoreLesson', () => {
 describe('payout', () => {
   const score = { accuracy: 1, wpm: 10, stars: 3 as const, perfectSpells: 4, spells: 5 };
   it('pays every star the first time', () => {
-    expect(payout(score, 0)).toMatchObject({ starGold: 50, spellGold: 4, newStars: [1, 2, 3] });
+    expect(payout(score, 0)).toMatchObject({ starGold: 100, spellGold: 4, newStars: [1, 2, 3] });
   });
   it('pays only new stars on replay', () => {
-    expect(payout(score, 2)).toMatchObject({ starGold: 25, newStars: [3] });
+    expect(payout(score, 2)).toMatchObject({ starGold: 50, newStars: [3] });
     expect(payout(score, 3)).toMatchObject({ starGold: 0, total: 4 });
   });
 });

@@ -1,0 +1,21 @@
+{
+  "prompt": "Six VERY WIDE panoramic windows for the stone wall of a cozy wizard tower, each seen straight on. Every window is about TWICE AS WIDE AS IT IS TALL (landscape shape, like a wide picture window), in two rows of three. 1: an old broken wide window with cracked dusty glass, boarded up with crooked planks and cobwebs. 2: a wide arched wooden window with three panes showing a sunny meadow, rolling green hills and a tiny village far away. 3: a wide oval window with a golden frame showing a sunset over the sea. 4: a wide window with eight small square panes showing snowy mountains under a blue sky. 5: a wide frosty winter window covered in frost swirls with snowy pine trees outside. 6: a wide arched window showing a starry night sky with a crescent moon over hills.",
+  "aspect": "21:9",
+  "reference": [
+    "hats-a"
+  ],
+  "category": "windows",
+  "scale": 3,
+  "merge": 1,
+  "cells": [
+    "broken",
+    "meadow",
+    "sunset",
+    "mountains",
+    "frosty",
+    "starry"
+  ],
+  "cellScale": {
+    "broken": 3.4
+  }
+}

@@ -45,9 +45,10 @@ A lesson can only ask for keys introduced in it or earlier lessons. Uppercase le
 | `done` | Sprite after the last hit. Leave out to make it vanish. |
 | `glow` | Warm glow when done (lanterns). |
 | `helper` | Sprite that swoops in when done (the broom). |
-| `onWall` | Hangs on the wall (tower only). |
 
 Spells are shared evenly across targets. Battles use one target with a `-grumpy` and a `-happy` sprite.
+
+**Tower lessons** take their target positions from the room: list the lesson's mess in `STORY_CLUTTER` (`src/content/world/room.ts`) with `until: '<lesson id>'`, in the same order and with the same sprites as the lesson's targets. A test checks they match. Outdoors, targets are spaced along the path automatically.
 
 ## Recipes
 

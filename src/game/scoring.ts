@@ -1,7 +1,8 @@
 import type { SpellResult } from './spell';
 
 /** Gold for earning each star on a lesson for the first time. */
-export const STAR_GOLD = [10, 15, 25] as const;
+/** 3 stars on every lesson pays for everything in the shop (checked in content.test.ts). */
+export const STAR_GOLD = [20, 30, 50] as const;
 /** Gold for each spell cast with no mistakes (every play, including replays). */
 export const PERFECT_SPELL_GOLD = 1;
 export const TWO_STAR_ACCURACY = 0.9;

@@ -96,3 +96,10 @@ export function equip(p: Profile, itemId: string | null, slot: keyof Profile['eq
 
 /** Clutter still lying around the room. */
 export const roomClutter = (p: Profile) => STORY_CLUTTER.filter((c) => !isDone(p, c.until));
+
+/** The big window's sprite, or null while it's still broken (the clutter shows the broken one). */
+export const windowSprite = (p: Profile) => (isDone(p, 'fix-window') ? (item(p.window)?.sprite ?? 'windows/meadow') : null);
+
+export function chooseWindow(p: Profile, id: string): Profile {
+  return p.owned.includes(id) && item(id)?.category === 'window' ? { ...p, window: id } : p;
+}

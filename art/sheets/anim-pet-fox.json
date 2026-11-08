@@ -1,0 +1,39 @@
+{
+  "style": false,
+  "prompt": "Animation frames for a pixel art game, made from the reference image. Use EXACTLY the same fox design, colors, outline, pixel size and outfits as the reference. Four rows of four frames on a flat magenta (#FF00FF) background, every frame the same scale and facing RIGHT, with empty space between frames. In every row, frame 1 is the fox SITTING exactly like the reference, and frames 2, 3 and 4 are a trotting cycle (legs stepping, tail swaying), moving to the right. Row 1: the fox plain, no clothes. Row 2: the fox wearing the scarf from the reference. Row 3: the fox wearing the tiny wizard hat from the reference. Row 4: the fox wearing the flower crown from the reference. No text, no shadows, no ground, no new objects.",
+  "aspect": "1:1",
+  "reference": [
+    "ref-pet-fox"
+  ],
+  "category": "pets",
+  "scale": 4,
+  "merge": 0,
+  "cells": [
+    "fox-plain",
+    "fox-plain-walk-1",
+    "fox-plain-walk-2",
+    "fox-plain-walk-3",
+    "fox-scarf",
+    "fox-scarf-walk-1",
+    "fox-scarf-walk-2",
+    "fox-scarf-walk-3",
+    "fox-hat",
+    "fox-hat-walk-1",
+    "fox-hat-walk-2",
+    "fox-hat-walk-3",
+    "fox-flowers",
+    "fox-flowers-walk-1",
+    "fox-flowers-walk-2",
+    "fox-flowers-walk-3"
+  ],
+  "fit": {
+    "cells": [
+      0
+    ],
+    "height": 57
+  },
+  "grid": [
+    4,
+    4
+  ]
+}

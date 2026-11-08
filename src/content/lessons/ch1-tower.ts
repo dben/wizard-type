@@ -76,7 +76,7 @@ export const chapter1: ChapterDef = {
       newKeys: ['g', 'h'],
       intro: 'Reach in with your pointers: G and H.',
       outro: 'No more cobwebs!',
-      scene: { location: 'tower', mode: 'chore', targets: [{ sprite: 'clutter/cobweb', helper: 'clutter/broom', onWall: true }, { sprite: 'clutter/cobweb-corner', helper: 'clutter/broom', onWall: true }] },
+      scene: { location: 'tower', mode: 'chore', targets: [{ sprite: 'clutter/cobweb', helper: 'clutter/broom' }, { sprite: 'clutter/cobweb-corner', helper: 'clutter/broom' }] },
       recipes: [
         { kind: 'keys', count: 3, keys: 'gh', size: [1, 2], groups: [1, 2] },
         { kind: 'words', count: 8, focus: 0.7 },

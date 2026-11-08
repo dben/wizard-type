@@ -36,15 +36,16 @@ export interface TargetDef {
   glow?: boolean;
   /** A helper that swoops in when the target is finished (e.g. the broom). */
   helper?: string;
-  /** Hangs on the wall instead of standing on the ground. */
-  onWall?: boolean;
 }
 
 export interface SceneDef {
   location: LocationId;
   /** chore = tidy things up, help = fix something for someone, battle = cheer up a grumpy creature. */
   mode: 'chore' | 'help' | 'battle';
-  /** Spells are shared out evenly across the targets, left to right. */
+  /**
+   * Spells are shared out evenly across the targets, left to right.
+   * In the tower, targets stand where the lesson's clutter is in the room (content/world/room.ts).
+   */
   targets: TargetDef[];
   /** A villager who watches and cheers. */
   npc?: string;
@@ -78,7 +79,7 @@ export interface ChapterDef {
 
 // ---------- Items ----------
 
-export type ItemCategory = 'hat' | 'robe' | 'wand' | 'pet' | 'furniture' | 'decor' | 'wall' | 'rug';
+export type ItemCategory = 'hat' | 'robe' | 'wand' | 'pet' | 'furniture' | 'decor' | 'wall' | 'rug' | 'window';
 
 export interface RobeStyle {
   main: string;

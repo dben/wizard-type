@@ -159,8 +159,8 @@ h1, h2, h3 { font-family: var(--font-head); margin: 0; line-height: 1.1; }
 .next-card .btn { margin-left: auto; }
 
 /* ---------- Lesson ---------- */
-.lesson { height: 100vh; padding: 8px 12px; gap: 8px; display: grid; grid-template-rows: auto minmax(120px, 1fr) auto auto; justify-items: center; overflow: hidden; }
-.lesson-top { display: flex; align-items: center; gap: 12px; width: min(100%, 1000px); }
+.lesson { height: 100vh; padding: 8px 12px 0; gap: 6px; display: grid; grid-template-rows: auto minmax(120px, 1fr) auto auto; justify-items: center; overflow: hidden; }
+.lesson-top { display: flex; align-items: center; gap: 12px; width: min(100%, 1400px); }
 .lesson-top .quit { min-height: 40px; padding: 4px 8px; }
 .lesson-title { font-family: var(--font-head); font-weight: 800; font-size: 22px; }
 .lesson-title small { opacity: 0.7; font-size: 15px; margin-right: 6px; }
@@ -169,11 +169,12 @@ h1, h2, h3 { font-family: var(--font-head); margin: 0; line-height: 1.1; }
 .spell-dots { display: flex; gap: 4px; margin-left: auto; flex-wrap: wrap; max-width: 300px; }
 .spell-dots span { width: 12px; height: 12px; border-radius: 50%; background: rgba(255, 255, 255, 0.2); border: 2px solid rgba(0, 0, 0, 0.3); }
 .spell-dots span.on { background: var(--gold); }
-.scene-wrap { position: relative; width: min(100%, 1000px); height: 100%; min-height: 0; }
-.scene { position: absolute; left: 50%; top: 0; transform: translateX(-50%); height: 100%; max-width: 100%; aspect-ratio: 480 / 200; border-radius: var(--radius); border: 4px solid var(--wood); background: #222; box-shadow: var(--shadow); }
-.prompt-area { position: relative; min-height: 84px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.scene-wrap { width: min(100%, 1400px); height: 100%; min-height: 0; container-type: size; display: flex; justify-content: center; align-items: center; }
+/* Fit 480:200 inside whatever space is left, without stretching. */
+.scene { width: min(100cqw, calc(100cqh * 2.4)); height: auto; aspect-ratio: 480 / 200; border-radius: var(--radius); border: 4px solid var(--wood); background: #222; box-shadow: var(--shadow); }
+.prompt-area { position: relative; min-height: 76px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 .prompt {
-  font-family: var(--font-mono); font-size: clamp(30px, 5vw, 52px); font-weight: 700;
+  font-family: var(--font-mono); font-size: clamp(28px, min(5vw, 6vh), 60px); font-weight: 700;
   background: var(--paper); color: var(--ink); padding: 4px 18px; border-radius: 14px; border: 4px solid var(--wood);
   box-shadow: var(--shadow); white-space: pre; max-width: 96vw; overflow: hidden;
 }
@@ -195,25 +196,32 @@ h1, h2, h3 { font-family: var(--font-head); margin: 0; line-height: 1.1; }
 .hint { background: var(--night-3); }
 
 /* ---------- Keyboard ---------- */
-.keyboard { width: min(96vw, calc(30vh * 15.2 / 6.6), 860px); }
-.kb-svg { width: 100%; display: block; overflow: visible; }
-.key rect { fill: var(--key-color); stroke: #3a2a4a; stroke-width: 0.05; }
+.keyboard { width: min(97vw, 1150px, calc(38vh * 15.5 / 7.15)); filter: drop-shadow(0 18px 14px rgba(10, 4, 20, 0.55)); }
+.kb-svg { width: 100%; display: block; overflow: hidden; }
+.kb-board { fill: #4d3a6e; stroke: #2a1f3d; stroke-width: 0.06; }
+.key .key-top { fill: #fffaf0; stroke: #3a2a4a; stroke-width: 0.045; transition: y 0.05s; }
+.key .key-edge { fill: #b9a9cf; stroke: #3a2a4a; stroke-width: 0.045; }
 .key text { fill: #3a2a4a; text-anchor: middle; font-family: var(--font-head); font-weight: 800; pointer-events: none; }
 .key .bump { fill: #3a2a4a; stroke: none; }
-.key.unlearned rect { fill: #6d6080; }
-.key.unlearned text { fill: #a99fb8; }
-.key.next rect { fill: #fff; stroke: var(--gold); stroke-width: 0.12; animation: glow 0.9s ease-in-out infinite; }
-.key.down rect { transform: translateY(0.06px); filter: brightness(0.8); }
-@keyframes glow { 50% { stroke: #ff9f1c; } }
+.key.unlearned .key-top { fill: #6d5d86; }
+.key.unlearned .key-edge { fill: #5a4a72; }
+.key.unlearned text { fill: #9b8db4; }
+.key.next .key-top { fill: var(--key-color); stroke: #ff9f1c; stroke-width: 0.1; animation: glow 0.9s ease-in-out infinite; }
+.key.down .key-top { filter: brightness(0.88); }
+@keyframes glow { 50% { stroke: #fff3b0; } }
 .f-L5 { --key-color: var(--f-L5); } .f-L4 { --key-color: var(--f-L4); } .f-L3 { --key-color: var(--f-L3); }
 .f-L2 { --key-color: var(--f-L2); } .f-R2 { --key-color: var(--f-R2); } .f-R3 { --key-color: var(--f-R3); }
 .f-R4 { --key-color: var(--f-R4); } .f-R5 { --key-color: var(--f-R5); } .f-thumb { --key-color: var(--f-thumb); }
-.hands { pointer-events: none; }
-.hands .palm { fill: var(--skin); opacity: 0.45; }
-.hands .finger { stroke: var(--skin); stroke-width: 0.42; stroke-linecap: round; opacity: 0.45; transition: all 0.15s; }
-.hands .finger.on { opacity: 0.8; }
-.hands .tip { fill: var(--skin); stroke: #3a2a4a; stroke-width: 0.04; opacity: 0.55; transition: all 0.15s; }
-.hands .tip.on { opacity: 0.95; stroke: #ff9f1c; stroke-width: 0.08; }
+.hands { pointer-events: none; opacity: 0.55; }
+.hands line { stroke-linecap: round; transition: all 0.12s ease-out; }
+.hands .hand-outline { fill: var(--outline); stroke: var(--outline); stroke-width: 0.09; stroke-linejoin: round; }
+.hands .hand-fill { fill: var(--skin); stroke: none; }
+.hands .finger-outline { stroke: var(--outline); }
+.hands .finger-fill { stroke: var(--skin); }
+.hands .finger-fill.on { stroke: color-mix(in srgb, var(--skin) 80%, #fff); }
+.hands .nail { fill: #fff; opacity: 0.55; transition: all 0.12s ease-out; }
+.hands .press-ring { fill: none; stroke: #ff9f1c; stroke-width: 0.09; animation: ring 0.9s ease-in-out infinite; }
+@keyframes ring { 50% { stroke-width: 0.16; } }
 
 /* ---------- Overlays (intro, results) ---------- */
 .overlay { position: fixed; inset: 0; background: rgba(20, 12, 32, 0.6); display: grid; place-items: center; z-index: 10; padding: 16px; }
@@ -247,6 +255,17 @@ h1, h2, h3 { font-family: var(--font-head); margin: 0; line-height: 1.1; }
 .loot-item.gift { animation: pop 0.4s 1.6s backwards; }
 .new-shop { display: flex; flex-direction: column; align-items: center; }
 .new-shop-row { display: flex; gap: 8px; align-items: flex-end; flex-wrap: wrap; justify-content: center; }
+.big-choices { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.big-choice {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  width: 112px; height: 104px; border-radius: 16px; border: 4px solid var(--wood);
+  background: var(--gold); color: var(--ink); box-shadow: 0 5px 0 var(--wood);
+  font-family: var(--font-head); font-size: 22px;
+}
+.big-choice:hover { transform: translateY(-2px); }
+.big-choice:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--wood); }
+.big-choice.go { background: var(--green); color: #fff; text-shadow: 0 2px 0 var(--green-dark); }
+.big-arrow { font-size: 44px; line-height: 48px; }
 .robe-dot { width: 28px; height: 28px; border-radius: 50%; border: 3px solid var(--wood); }
 
 /* ---------- Room ---------- */
@@ -261,7 +280,7 @@ h1, h2, h3 { font-family: var(--font-head); margin: 0; line-height: 1.1; }
 .room img.flip { transform: scaleX(-1); }
 .room img.actor { pointer-events: none; }
 .item-tools { position: absolute; transform: translate(-50%, -100%); display: flex; gap: 4px; z-index: 9999; }
-.item-tools button { width: 40px; height: 40px; border-radius: 50%; border: 3px solid var(--wood); background: var(--paper); color: var(--ink); font-size: 20px; font-weight: 800; }
+.item-tools button { width: 40px; height: 40px; border-radius: 50%; border: 3px solid var(--wood); background: var(--paper); color: var(--ink); font-size: 20px; font-weight: 800; display: grid; place-items: center; padding: 0; }
 .room-hint { position: absolute; transform: translate(-50%, -100%); background: var(--paper); color: var(--ink); border: 3px solid var(--wood); border-radius: 10px; padding: 4px 10px; z-index: 9999; font-weight: 700; white-space: nowrap; }
 .tray { width: min(100%, 1000px); }
 .tray .tabs { margin-bottom: 8px; }

@@ -4,7 +4,10 @@ import { describe, expect, it } from 'vitest';
 import { generateSpells, isOnKeyboard, isTypeable } from '../game/generator';
 import { createRng } from '../game/rng';
 import { CHAPTERS, LESSONS } from './curriculum';
+import { STORY_CLUTTER, clutterFor } from './world/room';
+import { allAnimationSprites, petMotion } from './world/animations';
 import { ITEMS, STARTER_ITEMS, item } from './items';
+import { STAR_GOLD } from '../game/scoring';
 
 const spriteExists = (s: string) => existsSync(resolve(__dirname, '../../public/sprites', `${s}.png`));
 const lessonIds = new Set(LESSONS.map((l) => l.lesson.id));
@@ -76,6 +79,26 @@ describe('curriculum', () => {
     });
   }
 
+  it('tower lessons have one room spot per target', () => {
+    for (const { lesson } of LESSONS.filter((l) => l.lesson.scene.location === 'tower')) {
+      const spots = clutterFor(lesson.id);
+      expect(spots.map((s) => s.sprite), lesson.id).toEqual(lesson.scene.targets.map((t) => t.sprite));
+    }
+  });
+
+  it('room clutter sprites exist and point at real lessons', () => {
+    for (const c of STORY_CLUTTER) {
+      expect(spriteExists(c.sprite), c.sprite).toBe(true);
+      expect(lessonIds.has(c.until), c.until).toBe(true);
+    }
+  });
+
+  it('animation frames exist', () => {
+    const pets = ITEMS.filter((i) => i.category === 'pet').map((i) => i.sprite!);
+    for (const f of allAnimationSprites(pets)) expect(spriteExists(f), f).toBe(true);
+    for (const p of pets) expect(petMotion(p), p).toBeDefined();
+  });
+
   it('chapter icons exist', () => {
     for (const c of CHAPTERS) expect(spriteExists(c.icon), c.icon).toBe(true);
   });
@@ -106,6 +129,18 @@ describe('items', () => {
     for (const i of ITEMS) {
       const free = i.price === 0;
       if (free) expect(gifts.has(i.id) || STARTER_ITEMS.includes(i.id), `${i.id} is free but never given`).toBe(true);
+    }
+  });
+
+  it('3 stars on every lesson pays for the whole shop', () => {
+    const shop = ITEMS.reduce((n, i) => n + i.price, 0);
+    const stars = LESSONS.length * STAR_GOLD.reduce((a, b) => a + b, 0);
+    expect(shop).toBeLessThanOrEqual(stars);
+  });
+
+  it('every lesson opens something new in the shop', () => {
+    for (const { lesson } of LESSONS.slice(0, -1)) {
+      expect(ITEMS.some((i) => i.unlock === lesson.id), lesson.id).toBe(true);
     }
   });
 
