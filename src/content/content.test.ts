@@ -6,6 +6,7 @@ import { createRng } from '../game/rng';
 import { CHAPTERS, LESSONS } from './curriculum';
 import { STORY_CLUTTER, clutterFor } from './world/room';
 import { allAnimationSprites, petMotion } from './world/animations';
+import { HAIR_STYLES } from './world/looks';
 import { ITEMS, STARTER_ITEMS, item } from './items';
 import { STAR_GOLD } from '../game/scoring';
 
@@ -97,6 +98,13 @@ describe('curriculum', () => {
     const pets = ITEMS.filter((i) => i.category === 'pet').map((i) => i.sprite!);
     for (const f of allAnimationSprites(pets)) expect(spriteExists(f), f).toBe(true);
     for (const p of pets) expect(petMotion(p), p).toBeDefined();
+  });
+
+  it('every hairstyle has a base sprite and a role mask', () => {
+    for (const h of HAIR_STYLES) {
+      expect(spriteExists(`wizard/base-${h}`), h).toBe(true);
+      expect(spriteExists(`wizard/base-${h}-roles`), `${h} roles`).toBe(true);
+    }
   });
 
   it('chapter icons exist', () => {

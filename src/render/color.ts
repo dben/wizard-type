@@ -18,6 +18,6 @@ export function shadeRGB(c: RGB, f: number): RGB {
     const shadow: RGB = [40, 20, 50];
     return c.map((v, i) => Math.round(v * f + shadow[i] * (1 - f) * 0.35)) as RGB;
   }
-  const k = (f - 1) * 2.2;
+  const k = (f - 1) * 1.3;
   return c.map((v) => Math.round(v + (255 - v) * k)) as RGB;
 }

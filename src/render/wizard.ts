@@ -25,18 +25,9 @@ export const WIZ = {
 export const WIZ_CANVAS = { w: WIZ.size, h: WIZ.size + WIZ.padTop };
 
 /** Most common color of each role in the base art; shading is measured against these. */
-const REF = { skin: lum(243, 181, 137), hair: lum(36, 188, 46), robe: lum(178, 181, 186) };
-
 type Role = 'skin' | 'hair' | 'robe' | null;
 
-function role(r: number, g: number, b: number): Role {
-  if (g > r + 40 && g > b + 30) return 'hair';
-  const max = Math.max(r, g, b);
-  const min = Math.min(r, g, b);
-  if (max - min < 26 && max > 90) return 'robe';
-  if (r > 170 && r > g && g > b && r - b > 60 && g > 120) return 'skin';
-  return null;
-}
+const REF = { skin: lum(243, 181, 137), hair: lum(36, 188, 46), robe: lum(178, 181, 186) };
 
 /**
  * Snap a shade to one of five steps of the target color. Pixel art reads
@@ -66,7 +57,7 @@ function patternAt(pattern: RobeStyle['pattern'], x: number, y: number): boolean
 }
 
 export async function buildWizard(look: WizardLook, robe: RobeStyle, hat?: ItemDef | null): Promise<HTMLCanvasElement> {
-  const base = await loadSprite(`wizard/base-${look.hair}`);
+  const [base, roleImg] = await Promise.all([loadSprite(`wizard/base-${look.hair}`), loadSprite(`wizard/base-${look.hair}-roles`)]);
   const c = document.createElement('canvas');
   c.width = WIZ_CANVAS.w;
   c.height = WIZ_CANVAS.h;
@@ -76,6 +67,12 @@ export async function buildWizard(look: WizardLook, robe: RobeStyle, hat?: ItemD
 
   const img = ctx.getImageData(0, WIZ.padTop, WIZ.size, WIZ.size);
   const d = img.data;
+  // Role masks (tools/art/wizard_roles.py): red = skin, green = hair, blue = robe.
+  const rc = document.createElement('canvas').getContext('2d')!;
+  rc.canvas.width = WIZ.size;
+  rc.canvas.height = WIZ.size;
+  rc.drawImage(roleImg, 0, 0);
+  const m = rc.getImageData(0, 0, WIZ.size, WIZ.size).data;
   const skin = hex(look.skin);
   const hair = hex(look.hairColor);
   const main = hex(robe.main);
@@ -85,7 +82,7 @@ export async function buildWizard(look: WizardLook, robe: RobeStyle, hat?: ItemD
   for (let i = 0; i < roles.length; i++) {
     const o = i * 4;
     if (d[o + 3] === 0) continue;
-    const r = role(d[o], d[o + 1], d[o + 2]);
+    const r: Role = m[o + 3] < 128 ? null : m[o] > 128 ? 'skin' : m[o + 1] > 128 ? 'hair' : m[o + 2] > 128 ? 'robe' : null;
     roles[i] = r;
     let out: RGB | null = null;
     if (r === 'skin') out = ramp(d[o], d[o + 1], d[o + 2], skin, REF.skin);
