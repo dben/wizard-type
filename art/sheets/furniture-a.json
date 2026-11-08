@@ -1,0 +1,21 @@
+{
+  "prompt": "Nine pieces of cozy wizard bedroom furniture in three rows of three, each shown from the front at a slight angle. IMPORTANT: no floor, no rug, no platform and no base tile under any object; each object stands alone on the magenta background. Objects: cozy bed with a patchwork quilt, wooden writing desk, tall bookshelf full of colorful books, cushy red armchair, round wooden table, tall wooden wardrobe, brass telescope on a tripod, big leafy potted fern, tall grandfather clock.",
+  "aspect": "1:1",
+  "reference": [
+    "furniture-b"
+  ],
+  "category": "furniture",
+  "scale": 4,
+  "merge": 1,
+  "cells": [
+    "bed",
+    "desk",
+    "bookshelf",
+    "armchair",
+    "round-table",
+    "wardrobe",
+    "telescope",
+    "fern",
+    "grandfather-clock"
+  ]
+}

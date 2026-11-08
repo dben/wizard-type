@@ -1,0 +1,28 @@
+{
+  "prompt": "Sixteen chunky game interface icons in four rows of four: shiny gold coin, filled yellow star, empty grey star outline, padlock, little house, shopping bag, clothes hanger, rolled map scroll, speaker with sound waves, speaker with an X, open hand, left arrow, wrapped gift box, golden trophy, green check mark, red heart.",
+  "aspect": "1:1",
+  "reference": [
+    "hats-a"
+  ],
+  "category": "ui",
+  "scale": 4,
+  "merge": 1,
+  "cells": [
+    "coin",
+    "star",
+    "star-empty",
+    "lock",
+    "home",
+    "bag",
+    "hanger",
+    "map",
+    "sound-on",
+    "sound-off",
+    "hand",
+    "back",
+    "gift",
+    "trophy",
+    "check",
+    "heart"
+  ]
+}

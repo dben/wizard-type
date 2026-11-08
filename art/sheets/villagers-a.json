@@ -1,0 +1,20 @@
+{
+  "prompt": "Eight cute villagers standing and facing to the left, in two rows of four: a baker holding bread, a farmer girl in a straw hat, a grandpa with a cane, a little kid holding a balloon, a friendly knight, a shopkeeper lady with an apron, a fisherman with a rod, a grandma holding a basket of apples.",
+  "aspect": "16:9",
+  "reference": [
+    "hats-a"
+  ],
+  "category": "villagers",
+  "scale": 4,
+  "merge": 1,
+  "cells": [
+    "baker",
+    "farmer",
+    "grandpa",
+    "kid",
+    "knight",
+    "shopkeeper",
+    "fisher",
+    "grandma"
+  ]
+}

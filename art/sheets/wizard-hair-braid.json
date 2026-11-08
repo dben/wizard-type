@@ -1,0 +1,17 @@
+{
+  "style": false,
+  "prompt": "Edit the reference image. Keep exactly the same character, same pose, same size, same position in the frame, same face, same grey robe, same shoes, same pixel art style and pixel size, and the same flat magenta (#FF00FF) background. Change ONLY the hair to a single long braid hanging over the shoulder. The hair must stay the same pure bright green color (#22CC22). No hat, nothing in the hands, no text.",
+  "aspect": "1:1",
+  "reference": [
+    "wizard-base"
+  ],
+  "category": "wizard",
+  "scale": 8,
+  "merge": 1,
+  "colors": 40,
+  "cells": [
+    "base-braid"
+  ],
+  "trim": false,
+  "resize": 0.75
+}

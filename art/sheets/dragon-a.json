@@ -1,0 +1,14 @@
+{
+  "prompt": "Two big friendly-looking cartoon dragons side by side, both the SAME red dragon facing to the left with wings and a curly tail. LEFT: grumpy, puffing smoke from its nose, frowning. RIGHT: happy and smiling with little hearts.",
+  "aspect": "16:9",
+  "reference": [
+    "hats-a"
+  ],
+  "category": "creatures",
+  "scale": 4,
+  "merge": 10,
+  "cells": [
+    "dragon-grumpy",
+    "dragon-happy"
+  ]
+}

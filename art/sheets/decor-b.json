@@ -1,0 +1,28 @@
+{
+  "prompt": "Sixteen cozy wall decorations in four rows of four, each seen straight on: framed painting of mountains, framed portrait of a cat, string of star bunting, round moon clock, rolled treasure map scroll, wooden shield with a star crest, green leaf wreath, purple banner with a moon, hanging paper lantern, round mirror with gold frame, small wall shelf with potion bottles, woven tapestry, cuckoo clock, framed butterfly, kite with a tail, framed rainbow drawing.",
+  "aspect": "1:1",
+  "reference": [
+    "hats-a"
+  ],
+  "category": "decor",
+  "scale": 5,
+  "merge": 1,
+  "cells": [
+    "painting-mountains",
+    "painting-cat",
+    "star-bunting",
+    "moon-clock",
+    "map-scroll",
+    "star-shield",
+    "wreath",
+    "moon-banner",
+    "paper-lantern",
+    "mirror",
+    "potion-shelf",
+    "tapestry",
+    "cuckoo-clock",
+    "butterflies",
+    "kite",
+    "rainbow-drawing"
+  ]
+}

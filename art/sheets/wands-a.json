@@ -1,0 +1,24 @@
+{
+  "prompt": "Twelve magic wands and staffs in two rows of six. Every one stands perfectly vertical, pointing straight up, handle at the bottom. Row 1 (short wands): plain oak twig wand, golden star-tipped wand, crystal wand with a blue gem, red and white candy cane wand, daisy flower wand, purple feather quill wand. Row 2 (tall staffs): crescent moon staff, red mushroom staff, lightning bolt staff, golden sun staff, leafy vine staff with a green bud, icy blue crystal staff.",
+  "aspect": "16:9",
+  "reference": [
+    "hats-a"
+  ],
+  "category": "wands",
+  "scale": 5,
+  "merge": 1,
+  "cells": [
+    "twig",
+    "star",
+    "crystal",
+    "candy-cane",
+    "daisy",
+    "feather",
+    "moon-staff",
+    "mushroom-staff",
+    "lightning-staff",
+    "sun-staff",
+    "vine-staff",
+    "ice-staff"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "kind": "background",
+  "style": true,
+  "prompt": "A cozy top-down fantasy world map for a children's game: a wizard tower on the bottom left, a winding dirt path leading through a small village with cottages, past farm fields and flowers, over a river with a stone bridge, through a forest, up to a tall mountain with a little dragon cave at the top right. Soft green grass, blue river. No text, no labels.",
+  "aspect": "16:9",
+  "reference": [
+    "hats-a"
+  ],
+  "out": "backgrounds/map.png",
+  "size": [
+    688,
+    384
+  ],
+  "scale": 4,
+  "colors": 64
+}

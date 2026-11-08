@@ -1,0 +1,20 @@
+{
+  "prompt": "Eight village buildings and objects for a side-scrolling game, in two rows of four, all seen from the side: small thatched cottage, bakery with a striped awning, windmill, market stall with fruit, tall stone wizard tower with a pointy purple roof, wooden plank bridge seen from the side, tall rocky mountain cliff, little stone hut.",
+  "aspect": "16:9",
+  "reference": [
+    "hats-a"
+  ],
+  "category": "props",
+  "scale": 3,
+  "merge": 1,
+  "cells": [
+    "cottage",
+    "bakery",
+    "windmill",
+    "market-stall",
+    "wizard-tower",
+    "bridge",
+    "cliff",
+    "stone-hut"
+  ]
+}
