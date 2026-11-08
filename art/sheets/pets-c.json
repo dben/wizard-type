@@ -1,0 +1,20 @@
+{
+  "prompt": "Two rows of four small pet animals, all sitting and facing to the right. Row 1: four versions of the SAME small fluffy white bunny: plain, wearing a tiny blue scarf, wearing a tiny pointy wizard hat, wearing a flower crown. Row 2: four versions of the SAME small chubby purple baby dragon with tiny wings: plain, wearing a tiny red scarf, wearing a tiny pointy wizard hat, wearing a flower crown.",
+  "aspect": "16:9",
+  "reference": [
+    "hats-a"
+  ],
+  "category": "pets",
+  "scale": 6,
+  "merge": 1,
+  "cells": [
+    "bunny-plain",
+    "bunny-scarf",
+    "bunny-hat",
+    "bunny-flowers",
+    "dragon-plain",
+    "dragon-scarf",
+    "dragon-hat",
+    "dragon-flowers"
+  ]
+}

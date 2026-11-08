@@ -1,0 +1,16 @@
+{
+  "kind": "background",
+  "style": true,
+  "prompt": "Inside of a cozy round stone wizard tower room, seen straight from the side like a stage. Stone brick back wall, warm wooden plank floor across the bottom third, a stone fireplace on the right side of the back wall. The room is EMPTY with no furniture, no window, no characters. Soft warm light. Full image, no border.",
+  "aspect": "16:9",
+  "reference": [
+    "hats-a"
+  ],
+  "out": "backgrounds/tower.png",
+  "size": [
+    480,
+    270
+  ],
+  "scale": 4,
+  "colors": 64
+}

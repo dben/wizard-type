@@ -1,0 +1,24 @@
+{
+  "prompt": "Twelve objects in three rows of four. Row 1: four grey dust piles of different sizes. Row 2: two cute grey fluffy dust bunnies with little eyes, a corner cobweb, a hanging cobweb. Row 3: a happy living magic broom with a cute face, a dustpan, a broken plate, a pile of crumpled paper. ",
+  "aspect": "16:9",
+  "reference": [
+    "hats-a"
+  ],
+  "category": "clutter",
+  "scale": 4,
+  "merge": 1,
+  "cells": [
+    "dust-1",
+    "dust-2",
+    "dust-3",
+    "dust-4",
+    "dust-bunny-1",
+    "dust-bunny-2",
+    "cobweb-corner",
+    "cobweb",
+    "broom",
+    "dustpan",
+    "plate-broken",
+    "paper-pile"
+  ]
+}

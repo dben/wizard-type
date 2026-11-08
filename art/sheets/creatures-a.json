@@ -1,0 +1,20 @@
+{
+  "prompt": "Four rows, two creatures per row. In each row the LEFT creature is grumpy (frowning, crossed arms or stomping) and the RIGHT one is the SAME creature happy and smiling. All face to the left. Row 1: a small round fuzzy black spider. Row 2: a little grey mouse. Row 3: a black crow. Row 4: a raccoon.",
+  "aspect": "3:4",
+  "reference": [
+    "hats-a"
+  ],
+  "category": "creatures",
+  "scale": 4,
+  "merge": 1,
+  "cells": [
+    "spider-grumpy",
+    "spider-happy",
+    "mouse-grumpy",
+    "mouse-happy",
+    "crow-grumpy",
+    "crow-happy",
+    "raccoon-grumpy",
+    "raccoon-happy"
+  ]
+}

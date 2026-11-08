@@ -1,0 +1,97 @@
+import type { ChapterDef } from '../types';
+
+/** Chapter 2: the top row, plus Backspace. Each lesson fixes a broken thing in the tower. */
+export const chapter2: ChapterDef = {
+  id: 'repair',
+  title: 'Fix the Tower',
+  icon: 'fixtures/cauldron-fixed',
+  lessons: [
+    {
+      id: 'fix-chair',
+      title: 'Fix the Chair',
+      newKeys: ['e', 'i'],
+      intro: 'Reach up for E and I.',
+      outro: 'A chair to sit on!',
+      scene: { location: 'tower', mode: 'help', targets: [{ sprite: 'fixtures/chair-broken', done: 'fixtures/chair-fixed' }] },
+      recipes: [
+        { kind: 'keys', count: 3, keys: 'ei', size: [1, 2], groups: [1, 2] },
+        { kind: 'words', count: 8 },
+      ],
+      goalWpm: 7,
+      gifts: ['furniture-chair'],
+    },
+    {
+      id: 'fix-table',
+      title: 'Fix the Table',
+      newKeys: ['r', 'u', 'Backspace'],
+      intro: 'R and U. New: the Oops key fixes mistakes!',
+      outro: 'A table for tea!',
+      scene: { location: 'tower', mode: 'help', targets: [{ sprite: 'fixtures/table-broken', done: 'fixtures/table-fixed' }] },
+      recipes: [
+        { kind: 'keys', count: 3, keys: 'ru', size: [1, 2], groups: [1, 2] },
+        { kind: 'words', count: 9 },
+      ],
+      goalWpm: 7,
+      gifts: ['furniture-table'],
+    },
+    {
+      id: 'fix-shelf',
+      title: 'Fix the Shelf',
+      newKeys: ['t', 'y'],
+      intro: 'Stretch for T and Y.',
+      outro: 'Books for reading!',
+      scene: { location: 'tower', mode: 'help', targets: [{ sprite: 'fixtures/bookshelf-broken', done: 'fixtures/bookshelf-fixed' }] },
+      recipes: [
+        { kind: 'keys', count: 3, keys: 'ty', size: [1, 2], groups: [1, 2] },
+        { kind: 'words', count: 6 },
+        { kind: 'words', count: 3, perSpell: [2, 2] },
+      ],
+      goalWpm: 8,
+      gifts: ['furniture-old-bookshelf'],
+    },
+    {
+      id: 'fix-window',
+      title: 'Fix the Window',
+      newKeys: ['w', 'o'],
+      intro: 'W and O. Let the sun in!',
+      outro: 'Sunshine!',
+      scene: { location: 'tower', mode: 'help', targets: [{ sprite: 'fixtures/window-broken', done: 'fixtures/window-fixed', onWall: true }] },
+      recipes: [
+        { kind: 'keys', count: 3, keys: 'wo', size: [1, 2], groups: [1, 2] },
+        { kind: 'words', count: 6 },
+        { kind: 'words', count: 3, perSpell: [2, 2] },
+      ],
+      goalWpm: 8,
+      gifts: ['wall-window'],
+    },
+    {
+      id: 'fix-cauldron',
+      title: 'Fix the Cauldron',
+      newKeys: ['q', 'p'],
+      intro: 'Pinkies reach for Q and P.',
+      outro: 'Bubble bubble!',
+      scene: { location: 'tower', mode: 'help', targets: [{ sprite: 'fixtures/cauldron-broken', done: 'fixtures/cauldron-fixed' }] },
+      recipes: [
+        { kind: 'keys', count: 3, keys: 'qp', size: [1, 2], groups: [1, 2] },
+        { kind: 'words', count: 6, focus: 0.5 },
+        { kind: 'words', count: 3, perSpell: [2, 2] },
+      ],
+      goalWpm: 8,
+      gifts: ['furniture-cauldron'],
+    },
+    {
+      id: 'mouse',
+      title: 'Mischief Mouse',
+      newKeys: [],
+      intro: 'A grumpy mouse is nibbling the cheese!',
+      outro: 'The mouse is your friend now.',
+      scene: { location: 'tower', mode: 'battle', targets: [{ sprite: 'creatures/mouse-grumpy', done: 'creatures/mouse-happy' }] },
+      recipes: [
+        { kind: 'words', count: 5, focus: 0 },
+        { kind: 'words', count: 5, perSpell: [2, 3], focus: 0 },
+      ],
+      goalWpm: 9,
+      gifts: ['pet-owl'],
+    },
+  ],
+};

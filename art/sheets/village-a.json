@@ -1,0 +1,31 @@
+{
+  "prompt": "Six pairs of objects in three rows, four objects per row (two pairs per row). In each pair the LEFT object is broken or sad and the RIGHT object is fixed or happy. Pairs: stone water well (broken roof and bucket / fixed with bucket of water); wooden wagon (missing a wheel / fixed with all wheels); flower bed (bare dry dirt / full of colorful blooming flowers); wooden fence (broken boards / fixed); street lantern post (dark and cold / glowing warm); scarecrow (sad and droopy / happy and standing tall).",
+  "aspect": "16:9",
+  "reference": [
+    "hats-a"
+  ],
+  "category": "village",
+  "scale": 3,
+  "merge": 1,
+  "cells": [
+    "well-broken",
+    "well-fixed",
+    "wagon-broken",
+    "wagon-fixed",
+    "flowers-bare",
+    "flowers-bloom",
+    "fence-broken",
+    "fence-fixed",
+    "lantern",
+    null,
+    "scarecrow-sad",
+    "scarecrow-happy"
+  ],
+  "join": [
+    [
+      6,
+      7
+    ]
+  ],
+  "bgTolerance": 40
+}

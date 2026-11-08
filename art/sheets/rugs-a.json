@@ -1,0 +1,18 @@
+{
+  "prompt": "Six flat floor rugs seen from the front and slightly above, so they look like wide flat ovals and rectangles, in two rows of three: round blue rug with stars, oval rainbow striped rug, fluffy white sheep rug, dark blue rug with a crescent moon, green leaf-shaped rug, orange checkered rug.",
+  "aspect": "16:9",
+  "reference": [
+    "hats-a"
+  ],
+  "category": "rugs",
+  "scale": 4,
+  "merge": 1,
+  "cells": [
+    "stars",
+    "rainbow",
+    "sheep",
+    "moon",
+    "leaf",
+    "checkers"
+  ]
+}

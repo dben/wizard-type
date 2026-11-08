@@ -1,0 +1,16 @@
+{
+  "prompt": "One single cute chibi child wizard character, full body, standing, shown in side three-quarter view facing to the right. Big round head, small body, rosy cheeks, big friendly dark eyes, small smile. NO hat. Short tidy hair colored pure bright green (#22CC22) so it can be recolored later. Skin is a light peach tone. Wearing a long plain light grey robe with wide sleeves and no pattern or trim, small brown shoes. The front arm is bent and held slightly forward with an empty closed fist, ready to hold a wand. Nothing in the hands. The character is large and centered in the image.",
+  "aspect": "1:1",
+  "reference": [
+    "hats-a"
+  ],
+  "category": "wizard",
+  "scale": 8,
+  "merge": 1,
+  "cells": [
+    "base-short"
+  ],
+  "colors": 40,
+  "trim": false,
+  "resize": 0.75
+}

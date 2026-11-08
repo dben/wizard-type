@@ -1,0 +1,21 @@
+{
+  "prompt": "Nine pieces of cozy magical furniture in three rows of three, each shown from the front at a slight angle, standing on the floor: alchemy table with bubbling potion bottles, wooden rocking chair, toy chest with a star, crystal ball on a stone pedestal, round fish tank on a stand, tall floor lamp with a star shade, big mushroom stool, globe on a wooden stand, comfy purple bean bag.",
+  "aspect": "1:1",
+  "reference": [
+    "hats-a"
+  ],
+  "category": "furniture",
+  "scale": 4,
+  "merge": 1,
+  "cells": [
+    "alchemy-table",
+    "rocking-chair",
+    "toy-chest",
+    "crystal-pedestal",
+    "fish-tank",
+    "star-lamp",
+    "mushroom-stool",
+    "globe",
+    "bean-bag"
+  ]
+}

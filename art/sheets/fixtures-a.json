@@ -1,0 +1,30 @@
+{
+  "prompt": "Five pairs of objects in five rows. In each row the LEFT object is old, dusty and broken and the RIGHT object is the same object fixed, clean and shiny. Row 1: wooden chair (left: a leg broken off and cobwebs, right: fixed). Row 2: small round table (left: cracked and wobbly, right: fixed with a tablecloth). Row 3: bookshelf (left: tipped, books spilled, right: fixed, books tidy). Row 4: round window with a wooden frame (left: cracked glass and boards, right: clean glass with curtains). Row 5: black iron cauldron (left: dented, cold and dusty, right: shiny with a green magic bubbling brew).",
+  "aspect": "3:4",
+  "reference": [
+    "hats-a"
+  ],
+  "category": "fixtures",
+  "scale": 4,
+  "merge": 1,
+  "cells": [
+    "chair-broken",
+    null,
+    "chair-fixed",
+    null,
+    "table-broken",
+    "table-fixed",
+    null,
+    "bookshelf-broken",
+    "bookshelf-fixed",
+    null,
+    null,
+    "window-broken",
+    "window-fixed",
+    null,
+    "cauldron-broken",
+    null,
+    "cauldron-fixed",
+    null
+  ]
+}

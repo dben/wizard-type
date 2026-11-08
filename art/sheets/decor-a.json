@@ -1,0 +1,28 @@
+{
+  "prompt": "Sixteen small cozy tabletop decorations in four rows of four: potted cactus, pot of pink flowers, three lit candles, stack of old books, small crystal ball, teapot with cup, hourglass, glass jar of glowing fireflies, small spinning globe, hanging plant in a pot, glowing mushroom lamp, snow globe, music box, toy rocket, yellow rubber duck, potion bottle with a heart.",
+  "aspect": "1:1",
+  "reference": [
+    "hats-a"
+  ],
+  "category": "decor",
+  "scale": 7,
+  "merge": 1,
+  "cells": [
+    "cactus",
+    "flower-pot",
+    "candles",
+    "books",
+    "crystal-ball",
+    "teapot",
+    "hourglass",
+    "firefly-jar",
+    "globe-small",
+    "hanging-plant",
+    null,
+    "snow-globe",
+    "music-box",
+    "rocket",
+    "duck",
+    "love-potion"
+  ]
+}

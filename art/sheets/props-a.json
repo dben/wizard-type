@@ -1,0 +1,28 @@
+{
+  "prompt": "Sixteen outdoor scenery objects for a side-scrolling game, in four rows of four, all seen from the side: round green oak tree, tall pine tree, apple tree, white birch tree, round bush, flowering bush, grey boulder, small rocks, clump of wildflowers, red mushroom cluster, short wooden fence segment, wooden signpost, tall grass tuft, tree stump, hay bale, blue flowers.",
+  "aspect": "1:1",
+  "reference": [
+    "hats-a"
+  ],
+  "category": "props",
+  "scale": 3,
+  "merge": 1,
+  "cells": [
+    "oak",
+    "pine",
+    "apple-tree",
+    "birch",
+    "bush",
+    "flower-bush",
+    "boulder",
+    "rocks",
+    "wildflowers",
+    "mushrooms",
+    "fence",
+    "signpost",
+    "grass",
+    "stump",
+    "hay",
+    "blue-flowers"
+  ]
+}
