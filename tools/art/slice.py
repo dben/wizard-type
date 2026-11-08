@@ -18,7 +18,11 @@ Sheet spec fields used here:
     colors    max colors per sprite after cleanup (default 32)
     resize    resample the raw image by this factor first (fine-tunes output size)
     bgTolerance  lower (e.g. 60) also strips pink glow left from the magenta background
+    cellScale {"name": scale} gives one object its own (possibly fractional) scale
     join      [[a, b, ...]] preview indices to glue into one object (numbering before the join)
+    cropBottom fraction of each sprite's height to cut off the bottom
+    cutBottomOval [wfrac, hfrac] cut an outlined oval out of the bottom (hat undersides)
+    fillHoles true fills see-through pockets inside an object (hat brims)
     trim      false keeps the whole frame instead of cropping (for layered sprites)
 Background-only fields:
     out       output path under public/sprites, e.g. "backgrounds/tower.png"
@@ -105,6 +109,44 @@ def reading_order(boxes):
     return [b for row in rows for b in sorted(row, key=lambda b: b[1])]
 
 
+def fill_holes(rgb: np.ndarray, alpha: np.ndarray):
+    """Fill transparent pockets enclosed by the sprite (e.g. the inside of a hat brim)."""
+    h, w = alpha.shape
+    closed = dilate(alpha, 1)  # close 1px gaps so a slightly broken ring still counts
+    outside = np.zeros_like(alpha)
+    stack = [(y, x) for y in range(h) for x in (0, w - 1)] + [(y, x) for x in range(w) for y in (0, h - 1)]
+    while stack:
+        y, x = stack.pop()
+        if 0 <= y < h and 0 <= x < w and not outside[y, x] and not closed[y, x]:
+            outside[y, x] = True
+            stack += [(y + 1, x), (y - 1, x), (y, x + 1), (y, x - 1)]
+    outside = dilate(outside, 1) & ~alpha  # undo the closing at the true edges
+    holes = ~alpha & ~outside
+    if not holes.any():
+        return rgb, alpha
+    ring = dilate(holes, 1) & alpha
+    shade = (np.median(rgb[ring], axis=0) * 0.8).astype(np.uint8)
+    rgb = rgb.copy()
+    rgb[holes] = shade
+    return rgb, alpha | holes
+
+
+def cut_bottom_oval(im: Image.Image, wfrac: float, hfrac: float) -> Image.Image:
+    """Make an oval at the bottom center transparent and outline its edge."""
+    a = np.array(im)
+    h, w = a.shape[:2]
+    yy, xx = np.mgrid[0:h, 0:w]
+    rx, ry = wfrac * w / 2, hfrac * h
+    inside = ((xx - (w - 1) / 2) / rx) ** 2 + ((yy - (h - 0.5)) / ry) ** 2 <= 1
+    opaque = a[..., 3] > 0
+    lums = a[..., :3].astype(int).sum(axis=2)
+    outline = a[opaque][np.argmin(lums[opaque])]
+    edge = dilate(inside, 1) & ~inside & opaque
+    a[inside, 3] = 0
+    a[edge] = outline
+    return Image.fromarray(a, "RGBA")
+
+
 def clean_sprite(rgb: np.ndarray, alpha: np.ndarray, colors: int) -> Image.Image:
     rgba = np.dstack([rgb, np.where(alpha, 255, 0).astype(np.uint8)])
     im = Image.fromarray(rgba, "RGBA")
@@ -174,11 +216,31 @@ def slice_sheet(sheet_id: str, preview_only: bool) -> None:
     for k, (y0, x0, y1, x1, lab) in enumerate(boxes):
         if k >= len(cells) or not cells[k]:
             continue
-        if spec.get("trim", True):
+        cell_scale = spec.get("cellScale", {}).get(cells[k])
+        if cell_scale:  # re-cut this one object from the source at its own size
+            pad = s
+            crop = src[max(0, y0 * s - pad):y1 * s + pad, max(0, x0 * s - pad):x1 * s + pad]
+            f = s / cell_scale
+            crop = np.array(Image.fromarray(crop).resize((round(crop.shape[1] * f), round(crop.shape[0] * f)), Image.LANCZOS))
+            c2, a2 = downscale(crop, ~background_mask(crop, spec.get("bgTolerance", 90)), s)
+            ys, xs = np.nonzero(a2)
+            c2, a2 = c2[ys.min():ys.max() + 1, xs.min():xs.max() + 1], a2[ys.min():ys.max() + 1, xs.min():xs.max() + 1]
+            if spec.get("fillHoles"):
+                c2, a2 = fill_holes(c2, a2)
+            im = clean_sprite(c2, a2, spec.get("colors", 32))
+        elif spec.get("trim", True):
             a = alpha[y0:y1, x0:x1] & (labels[y0:y1, x0:x1] == lab)
-            im = clean_sprite(color[y0:y1, x0:x1], a, spec.get("colors", 32))
+            c = color[y0:y1, x0:x1]
+            if spec.get("fillHoles"):
+                c, a = fill_holes(c, a)
+            im = clean_sprite(c, a, spec.get("colors", 32))
         else:  # keep the full frame so layered sprites share coordinates
             im = clean_sprite(color, alpha & (labels == lab), spec.get("colors", 32))
+        if spec.get("cropBottom"):  # cut off a strip at the bottom (e.g. a mushroom stem)
+            im = im.crop((0, 0, im.width, round(im.height * (1 - spec["cropBottom"]))))
+            im = im.crop(im.getbbox())
+        if spec.get("cutBottomOval"):  # open up the underside so the head shows through
+            im = cut_bottom_oval(im, *spec["cutBottomOval"])
         im.save(outdir / f"{cells[k]}.png", optimize=True)
         print(f"  {k:2d} -> {spec['category']}/{cells[k]}.png {im.size}")
 

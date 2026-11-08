@@ -31,13 +31,13 @@ src/content  (data)  ──►  src/game  (pure rules)  ──►  src/ui + src/
 - **app/store.ts** keeps the save and current screen in a tiny observable; screens call `update(fn)` with a pure function from `game/`.
 - **render**:
   - `scene.ts`: the lesson scene. The lesson screen sends it events (`keySparkle`, `oops`, `poof`, `cast`, `celebrate`); it never decides rules.
-  - `wizard.ts`: builds the wizard from a base sprite per hair style. The bases are drawn with key colors (green hair, peach skin, grey robe); pixels are classified by color and re-tinted to the chosen skin, hair and robe. Robe patterns and hem trim are stamped onto robe pixels, then the hat is drawn at a fixed head anchor.
+  - `wizard.ts`: builds the wizard from a base sprite per hair style. The bases are drawn with key colors (green hair, peach skin, grey robe); pixels are classified by color and snapped to a 5-step shade ramp of the chosen skin, hair or robe color (flat steps keep the pixel art clean; smooth tinting looked blotchy). Robe patterns and hem trim are stamped onto robe pixels. Then the hat goes on: hair above the brim and outside the hat's outline is erased (per column, only above the hat's lowest pixel), and the hat is drawn at the head anchor.
   - `portrait.ts`: cached data-URL portraits for menus.
 
 ## Scene layout
 
 - Logical size 480 × 200, drawn at 2× into the canvas and scaled with CSS (`image-rendering: pixelated`).
-- Indoor (tower): painted background, the kid's own room decorations, targets spread across the floor or wall.
+- Indoor (tower): painted background, the chosen window, the kid's own room decorations, other lessons' mess greyed out, and this lesson's targets standing where its mess is in the room (`clutterFor()` in `content/world/room.ts`).
 - Outdoor: sky gradient, two procedural hill lines, hazy far props (parallax 0.55), ground strip, near props. Targets are spaced 240 px apart and the camera pans to the next one when a target is done, so the wizard appears to walk.
 - Spells are shared evenly across a lesson's targets. Battles have a single target with a heart meter.
 
@@ -47,8 +47,9 @@ All sprites are drawn 1:1 in scene pixels. Sizes were tuned by re-slicing at dif
 
 | Thing | Approx. size (px) |
 | --- | --- |
-| Wizard (frame) | 96 × 96, plus 36 px above for hats |
-| Hats | 40 wide |
+| Wizard (frame) | 96 × 96 (the kid is 84 tall), plus 40 px above for hats |
+| Hats | about 50 wide |
+| Big window | about 160 × 100 |
 | Pets | 40 tall |
 | Furniture | 40 to 80 tall |
 | Little decor | 25 to 35 |
@@ -60,3 +61,8 @@ All sprites are drawn 1:1 in scene pixels. Sizes were tuned by re-slicing at dif
 - `src/game/*.test.ts`: typing, scoring, progress, saves.
 - `src/content/content.test.ts`: validates all content. For each lesson it generates 30 runs and checks every prompt only uses keys learned so far, that new keys get practiced, that runs differ, and that every sprite file exists.
 - Visual checks are manual: run `npm run dev` and play.
+
+## Keyboard and hands
+
+- `ui/components/Keyboard.tsx` draws the keyboard as SVG in key units (one letter key = 1 unit). Learned keys are white, unlearned keys dim, and only the key(s) to press are colored by finger.
+- `ui/components/Hands.tsx` draws see-through hands in the same units: a rounded palm path and one capsule per finger from knuckle to fingertip. The reaching finger moves to its key and the whole hand leans 30% of the way. Outlines are drawn first and fills second so palm and fingers merge.

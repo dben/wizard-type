@@ -2,7 +2,7 @@
   "model": "google/gemini-3.1-flash-image",
   "prompt": "A grid of cute wizard hats, each centered in its own space. Classic blue starry cone hat, purple floppy hat with moon, red pointy hat with bell, green leafy hat, mushroom cap hat, pink hat with flowers, crown, frog hat, witch brim hat with candle, snowy winter hat, pumpkin hat, rainbow striped hat, cat-ear hat, dragon-horn hat, cloud hat, golden sun hat.",
   "category": "hats",
-  "scale": 5,
+  "scale": 4,
   "merge": 0,
   "cells": [
     "starry-blue",
@@ -11,7 +11,7 @@
     "leafy",
     "plain-navy",
     "buckle-yellow",
-    "mushroom",
+    null,
     "flower-pink",
     "crown",
     "frog",
@@ -29,5 +29,10 @@
     "sun",
     "polka-purple",
     "star-gold"
-  ]
+  ],
+  "cellScale": {
+    "crown": 4.9,
+    "snowy": 4.8
+  },
+  "fillHoles": true
 }

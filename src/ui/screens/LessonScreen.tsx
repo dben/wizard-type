@@ -9,7 +9,8 @@ import { LESSONS, lessonInfo, type LessonInfo } from '../../content/curriculum';
 import { item } from '../../content/items';
 import { generateSpells } from '../../game/generator';
 import { strokeFor } from '../../game/keyboard';
-import { finishLesson, type LessonOutcome } from '../../game/progress';
+import { finishLesson, roomClutter, windowSprite, type LessonOutcome } from '../../game/progress';
+import { isCreature } from '../../content/world/room';
 import { createRng } from '../../game/rng';
 import type { Profile } from '../../game/save';
 import { scoreLesson, type LessonScore } from '../../game/scoring';
@@ -196,6 +197,8 @@ function SceneView({ info, profile, spells, onReady }: { info: LessonInfo; profi
         pet: profile.equipped.pet ? (item(profile.equipped.pet)?.sprite ?? null) : null,
         sparkle: item(profile.equipped.robe)?.robe?.trim ?? '#ffd166',
         room: profile.room,
+        windowSprite: windowSprite(profile),
+        clutter: roomClutter(profile).filter((c) => !isCreature(c) && c.until !== info.lesson.id),
       });
       await sc.load();
       if (dead) return;

@@ -5,7 +5,7 @@ import { LESSONS, type LessonInfo } from '../../content/curriculum';
 import { ITEMS, item } from '../../content/items';
 import type { LessonOutcome } from '../../game/progress';
 import { THREE_STAR_ACCURACY, type LessonScore } from '../../game/scoring';
-import { Sprite } from '../components/Sprite';
+import { Icon, Sprite } from '../components/Sprite';
 import { Button, Gold, Stars } from '../components/bits';
 
 interface Props {
@@ -82,16 +82,27 @@ export function Results({ info, outcome, score, onReplay }: Props) {
           </div>
         )}
 
+        <div class="big-choices">
+          <button class="big-choice" onClick={() => go({ name: 'room' })}>
+            <Icon name="home" size={48} />
+            <b>Room</b>
+          </button>
+          <button class="big-choice" onClick={() => go({ name: 'shop' })}>
+            <Icon name="bag" size={48} />
+            <b>Shop</b>
+          </button>
+          {next && (
+            <button class="big-choice go" onClick={() => go({ name: 'lesson', lessonId: next.lesson.id })}>
+              <span class="big-arrow">➜</span>
+              <b>Next</b>
+            </button>
+          )}
+        </div>
         <div class="row center">
           <Button onClick={onReplay}>Again</Button>
           <Button onClick={() => go({ name: 'map' })} icon="map">
             Map
           </Button>
-          {next && (
-            <Button kind="primary" onClick={() => go({ name: 'lesson', lessonId: next.lesson.id })}>
-              Next ➜
-            </Button>
-          )}
         </div>
       </div>
     </div>

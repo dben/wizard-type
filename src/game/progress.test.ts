@@ -20,7 +20,7 @@ describe('progress', () => {
   it('pays stars once and gives gifts on the first win only', () => {
     const p0 = newProfile('Ada', look);
     const first = finishLesson(p0, 'wake-wand', score(2));
-    expect(first.payout.starGold).toBe(25);
+    expect(first.payout.starGold).toBe(50);
     expect(first.gifts).toEqual(['decor-candles']);
     const again = finishLesson(first.profile, 'wake-wand', score(2));
     expect(again.payout.starGold).toBe(0);
@@ -43,7 +43,7 @@ describe('progress', () => {
     let p = newProfile('Ada', look);
     const hat = item('hat-starry-blue')!;
     expect(shopState(p, hat)).toBe('locked');
-    p = finishLesson(p, 'broom', score(1)).profile;
+    p = { ...finishLesson(p, 'broom', score(1)).profile, gold: 0 };
     expect(shopState(p, hat)).toBe('poor');
     p = { ...p, gold: 100 };
     expect(shopState(p, hat)).toBe('buy');

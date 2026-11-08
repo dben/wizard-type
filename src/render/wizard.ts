@@ -6,24 +6,26 @@
  */
 import type { ItemDef, RobeStyle } from '../content/types';
 import type { WizardLook } from '../game/save';
-import { hex, tint, type RGB } from './color';
+import { hex, lum, shadeRGB, type RGB } from './color';
 import { loadSprite } from './sprites';
 
 /** Geometry of the 96x96 base sprites, measured from the art. */
 export const WIZ = {
   size: 96,
   /** Extra space above the base frame for tall hats. */
-  padTop: 36,
-  headX: 47,
-  hatY: 25,
-  handX: 72,
-  handY: 53,
-  feetY: 92,
+  padTop: 40,
+  /** Center of the head, and where the bottom of a hat's brim sits. */
+  headX: 48,
+  hatY: 21,
+  handX: 73,
+  handY: 42,
+  feetY: 90,
 } as const;
 
 export const WIZ_CANVAS = { w: WIZ.size, h: WIZ.size + WIZ.padTop };
 
-const REF = { skin: 207, hair: 130, robe: 176 };
+/** Most common color of each role in the base art; shading is measured against these. */
+const REF = { skin: lum(243, 181, 137), hair: lum(36, 188, 46), robe: lum(178, 181, 186) };
 
 type Role = 'skin' | 'hair' | 'robe' | null;
 
@@ -31,9 +33,19 @@ function role(r: number, g: number, b: number): Role {
   if (g > r + 40 && g > b + 30) return 'hair';
   const max = Math.max(r, g, b);
   const min = Math.min(r, g, b);
-  if (max - min < 32 && max > 100) return 'robe';
-  if (r > 185 && r > g && g > b && g > 115 && r - g < 75) return 'skin';
+  if (max - min < 26 && max > 90) return 'robe';
+  if (r > 170 && r > g && g > b && r - b > 60 && g > 120) return 'skin';
   return null;
+}
+
+/**
+ * Snap a shade to one of five steps of the target color. Pixel art reads
+ * clean with a few flat tones; smooth tinting made skin look blotchy.
+ */
+function ramp(r: number, g: number, b: number, target: RGB, refLum: number): RGB {
+  const k = lum(r, g, b) / refLum;
+  const step = k < 0.6 ? 0.5 : k < 0.78 ? 0.7 : k < 0.96 ? 0.86 : k < 1.07 ? 1 : 1.14;
+  return shadeRGB(target, step);
 }
 
 const STAR = ['.#.', '###', '.#.'];
@@ -76,9 +88,9 @@ export async function buildWizard(look: WizardLook, robe: RobeStyle, hat?: ItemD
     const r = role(d[o], d[o + 1], d[o + 2]);
     roles[i] = r;
     let out: RGB | null = null;
-    if (r === 'skin') out = tint(d[o], d[o + 1], d[o + 2], skin, REF.skin);
-    else if (r === 'hair') out = tint(d[o], d[o + 1], d[o + 2], hair, REF.hair);
-    else if (r === 'robe') out = tint(d[o], d[o + 1], d[o + 2], main, REF.robe);
+    if (r === 'skin') out = ramp(d[o], d[o + 1], d[o + 2], skin, REF.skin);
+    else if (r === 'hair') out = ramp(d[o], d[o + 1], d[o + 2], hair, REF.hair);
+    else if (r === 'robe') out = ramp(d[o], d[o + 1], d[o + 2], main, REF.robe);
     if (out) [d[o], d[o + 1], d[o + 2]] = out.map(Math.round);
   }
 
@@ -94,7 +106,7 @@ export async function buildWizard(look: WizardLook, robe: RobeStyle, hat?: ItemD
       const o = i * 4;
       const isHem = hem < 2 && y > 70;
       if (isHem || patternAt(robe.pattern, x, y)) {
-        const t = tint(d[o], d[o + 1], d[o + 2], trim, REF.robe);
+        const t = ramp(d[o], d[o + 1], d[o + 2], trim, REF.robe * 0.86);
         [d[o], d[o + 1], d[o + 2]] = t.map(Math.round);
       }
       hem++;
@@ -105,8 +117,57 @@ export async function buildWizard(look: WizardLook, robe: RobeStyle, hat?: ItemD
   if (hat?.sprite) {
     const h = await loadSprite(hat.sprite);
     const x = Math.round(WIZ.headX - h.width / 2);
-    const y = Math.round(WIZ.padTop + WIZ.hatY + (hat.hatOffset ?? 0) - h.height);
-    ctx.drawImage(h, x, y);
+    const bottom = WIZ.padTop + WIZ.hatY + (hat.hatOffset ?? 0);
+    clearAroundHat(ctx, h, x, bottom - h.height, bottom - 5);
+    ctx.drawImage(h, x, bottom - h.height);
   }
   return c;
+}
+
+/**
+ * Hair can't poke out through a hat. Above the brim line, erase wizard pixels
+ * around the hat's outline. Pixels inside the outline are kept, so a see-through
+ * gap inside a brim still shows the head instead of a hole.
+ */
+function clearAroundHat(ctx: CanvasRenderingContext2D, hat: HTMLImageElement, left: number, top: number, limitY: number) {
+  const w = hat.width;
+  const h = hat.height;
+  const t = document.createElement('canvas').getContext('2d')!;
+  t.canvas.width = w;
+  t.canvas.height = h;
+  t.drawImage(hat, 0, 0);
+  const a = t.getImageData(0, 0, w, h).data;
+  const solid = (x: number, y: number) => a[(y * w + x) * 4 + 3] > 0;
+
+  // Flood-fill the transparent area reachable from the edges: that's "outside".
+  const outside = new Uint8Array(w * h);
+  const stack: number[] = [];
+  for (let x = 0; x < w; x++) stack.push(x, (h - 1) * w + x);
+  for (let y = 0; y < h; y++) stack.push(y * w, y * w + w - 1);
+  while (stack.length) {
+    const i = stack.pop()!;
+    const x = i % w;
+    const y = (i / w) | 0;
+    if (outside[i] || solid(x, y)) continue;
+    outside[i] = 1;
+    if (x > 0) stack.push(i - 1);
+    if (x < w - 1) stack.push(i + 1);
+    if (y > 0) stack.push(i - w);
+    if (y < h - 1) stack.push(i + w);
+  }
+
+  const img = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
+  const d = img.data;
+  for (let x = Math.max(0, left + 2); x < Math.min(ctx.canvas.width, left + w - 2); x++) {
+    // Only clear above the hat's lowest pixel in this column, so hair under an overhang (mushroom cap) stays.
+    let lowest = -1;
+    for (let hy = h - 1; hy >= 0; hy--) if (solid(x - left, hy)) { lowest = hy; break; }
+    if (lowest < 0) continue;
+    for (let y = 0; y < Math.min(limitY, top + lowest); y++) {
+      const hy = y - top;
+      const inHat = hy >= 0 && hy < h && !outside[hy * w + (x - left)];
+      if (!inHat) d[(y * ctx.canvas.width + x) * 4 + 3] = 0;
+    }
+  }
+  ctx.putImageData(img, 0, 0);
 }

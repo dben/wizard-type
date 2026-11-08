@@ -41,14 +41,14 @@ Code: `src/game/scoring.ts`.
 
 | Source | Amount | Repeats? |
 | --- | --- | --- |
-| 1st star on a lesson | 10 | First time only |
-| 2nd star | 15 | First time only |
-| 3rd star | 25 | First time only |
+| 1st star on a lesson | 20 | First time only |
+| 2nd star | 30 | First time only |
+| 3rd star | 50 | First time only |
 | Each perfect spell (no mistakes) | 1 | Every play |
 
 Replaying lesson 1 forever earns about 9 gold a run, so grinding is slow. The real limit is **level gating**: every shop item has an `unlock` lesson and stays locked until that lesson is finished. Kids see the locked item and which lesson opens it.
 
-One full pass with 3 stars on everything earns about 1,600 gold (1,350 from stars plus up to 286 perfect spells). The shop holds about 4,000 gold of items (105 for sale), so collecting everything takes replays and practice.
+**3 stars on every lesson pays for everything in the shop.** Stars pay 2,700 gold in total; the shop holds 160 items for 2,680 gold. A test (`content.test.ts`) fails if the shop ever costs more than the stars pay, so new items need prices that fit. Perfect-spell gold is extra on top. Every lesson except the last opens at least one new shop item.
 
 ## Gifts and pets
 
@@ -59,9 +59,11 @@ One full pass with 3 stars on everything earns about 1,600 gold (1,350 from star
 
 ## The room
 
-- Starts dusty: dust piles, dust bunnies, cobwebs, a grumpy spider, broken chair, table, bookshelf, window, cauldron, and a mouse.
-- Each piece of clutter disappears when its lesson is done (`src/content/world/room.ts`). Tapping clutter says which lesson fixes it.
-- Kids place owned furniture, little things, wall hangings and rugs by tapping, then drag to move. Rugs draw under everything, little things draw on top of furniture.
+- Starts dusty: dust piles, dust bunnies, cobwebs, a grumpy spider, broken chair, table, bookshelf, a boarded-up window, a cauldron, and a mouse.
+- Each piece of clutter belongs to one lesson (`src/content/world/room.ts`) and disappears when that lesson is done. Tapping clutter says which lesson fixes it.
+- Tower lessons show the real room: the kid's furniture, the window, and every unfinished mess greyed out. The lesson's own mess is in full color, standing in the same spot, and is what the spells hit. The spider and mouse only appear in their own lessons.
+- The big window is part of the wall. Fixing it gives the Meadow Window; other styles (sunset, mountains, frosty, starry) come from the shop and are switched in the room's Window tab.
+- Kids place owned furniture, little things, wall hangings and rugs by tapping, then drag to move. Rugs draw under everything, little things draw on top of furniture, wall hangings always sit in front of the window.
 
 ## Curriculum
 
@@ -106,6 +108,8 @@ Battles are never failable: spells fill the creature's heart meter until it chee
 
 ## Open ideas
 
+- Pets (and the wizard) wandering around the room.
+- A few animation frames for the battle creatures.
 - Daily "practice spell" bonus to reward short regular practice without big gold.
 - A reading-free intro (audio voice-over) for younger kids.
 - More chapters: punctuation like `:` `-` `( )`, longer paragraphs, timed challenges.

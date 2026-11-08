@@ -1,0 +1,22 @@
+{
+  "prompt": "Four cute mushroom-cap wizard hats in one row, each is ONLY the round mushroom cap with NO stem, shaped like a hat that sits on a head (a wide dome with a slightly curled rim, seen from the front, a little from below). 1: brown cap with cream spots. 2: red cap with white spots. 3: blue cap with pale blue spots. 4: yellow cap with orange spots.",
+  "aspect": "16:9",
+  "reference": [
+    "hats-a"
+  ],
+  "category": "hats",
+  "scale": 6,
+  "merge": 1,
+  "fillHoles": true,
+  "cells": [
+    "mushroom",
+    "mushroom-red",
+    "mushroom-blue",
+    "mushroom-yellow"
+  ],
+  "cropBottom": 0.2,
+  "cutBottomOval": [
+    0.72,
+    0.42
+  ]
+}

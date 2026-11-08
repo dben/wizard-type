@@ -2,7 +2,7 @@
  * Save data: several kid profiles on one device, stored in localStorage.
  * Profiles can be copied to another device with a save code (export/import).
  */
-import { STARTER_ITEMS } from '../content/items';
+import { STARTER_ITEMS, item } from '../content/items';
 
 export type HairStyle = 'short' | 'long' | 'pigtails' | 'curly' | 'bun' | 'spiky' | 'braid';
 
@@ -44,6 +44,8 @@ export interface Profile {
   owned: string[];
   equipped: Equipped;
   room: Placement[];
+  /** Style of the big tower window (shows once the window is fixed). */
+  window: string;
   settings: { hands: boolean; sound: boolean };
 }
 
@@ -69,6 +71,7 @@ export function newProfile(name: string, look: WizardLook, id: string = crypto.r
     owned: [...STARTER_ITEMS],
     equipped: { hat: 'hat-plain-navy', robe: 'robe-sky', wand: 'wand-twig', pet: null },
     room: [],
+    window: 'wall-window',
     settings: { hands: true, sound: true },
   };
 }
@@ -82,6 +85,8 @@ function normalize(p: Profile): Profile {
     equipped: { ...base.equipped, ...p.equipped },
     settings: { ...base.settings, ...p.settings },
     owned: [...new Set([...STARTER_ITEMS, ...(p.owned ?? [])])],
+    // The window used to be a placeable wall item; it's part of the wall now.
+    room: (p.room ?? []).filter((r) => item(r.item) && item(r.item)!.category !== 'window'),
   };
 }
 

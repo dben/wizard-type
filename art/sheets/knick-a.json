@@ -1,0 +1,28 @@
+{
+  "prompt": "Sixteen cozy wizard knick-knacks for a desk or shelf, in four rows of four: stack of rolled scrolls, quill in an ink pot, three little potion bottles, purple crystal cluster, small candle lantern, plush owl toy, wooden toy dragon, jar full of tiny stars, crescent moon lamp, round alarm clock, little frog statue, cookie jar, tiny treasure chest with gems, open spell book, small brass bell, toy wooden sailboat.",
+  "aspect": "1:1",
+  "reference": [
+    "decor-a"
+  ],
+  "category": "decor",
+  "scale": 7,
+  "merge": 1,
+  "cells": [
+    "scrolls",
+    "quill",
+    "potions",
+    "crystals",
+    "candle-lantern",
+    "plush-owl",
+    "toy-dragon",
+    "star-jar",
+    "moon-lamp",
+    "alarm-clock",
+    "frog-statue",
+    "cookie-jar",
+    "treasure-chest",
+    "spell-book",
+    "bell",
+    "sailboat"
+  ]
+}
