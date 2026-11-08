@@ -59,7 +59,7 @@ What the slicer does: removes magenta and magenta-tinted fringe, shrinks by `sca
 | `cellScale` | `{"name": scale}` gives one object its own scale, fractions allowed (crown, beanie). |
 | `fillHoles` | Fill see-through pockets inside an object, like the inside of a hat brim. |
 | `cropBottom` | Cut this fraction off the bottom of every sprite (mushroom stems). |
-| `cutBottomOval` | `[wfrac, hfrac]` cut an outlined oval out of the bottom so a head shows through (mushroom caps). |
+| `cutBottomOval` | `[wfrac, hfrac]` cut an outlined oval out of the bottom so a head shows through (mushroom caps use `[0.68, 0.16]`). |
 | `kind: "background"` + `out` + `size` | Full-image backgrounds instead of sprite sheets. |
 
 ## The wizard
