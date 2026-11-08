@@ -1,0 +1,30 @@
+{
+  "style": false,
+  "prompt": "Animation frames for a pixel art game, made from the reference image. Use EXACTLY the same crow character design, colors, outline, pixel size and size as the reference. Two rows of three frames on a flat magenta (#FF00FF) background, every frame the same size, the same scale and facing LEFT like the reference, with lots of empty space between frames. Row 1: the GRUMPY crow (left in the reference), a 3-frame idle loop: ruffling its feathers crossly. Frame 1 is the reference pose, frames 2 and 3 change only a little. Row 2: the HAPPY crow (right in the reference), a 3-frame idle loop: flapping its wings happily. Frame 1 is the reference pose, frames 2 and 3 change only a little. No text, no shadows, no new objects.",
+  "aspect": "16:9",
+  "reference": [
+    "ref-crow"
+  ],
+  "category": "creatures",
+  "scale": 4,
+  "merge": 1,
+  "cells": [
+    "crow-grumpy",
+    "crow-grumpy-2",
+    "crow-grumpy-3",
+    "crow-happy",
+    "crow-happy-2",
+    "crow-happy-3"
+  ],
+  "fit": {
+    "cells": [
+      0,
+      3
+    ],
+    "height": 71
+  },
+  "grid": [
+    2,
+    3
+  ]
+}

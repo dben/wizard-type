@@ -5,6 +5,7 @@ import { generateSpells, isOnKeyboard, isTypeable } from '../game/generator';
 import { createRng } from '../game/rng';
 import { CHAPTERS, LESSONS } from './curriculum';
 import { STORY_CLUTTER, clutterFor } from './world/room';
+import { allAnimationSprites, petMotion } from './world/animations';
 import { ITEMS, STARTER_ITEMS, item } from './items';
 import { STAR_GOLD } from '../game/scoring';
 
@@ -90,6 +91,12 @@ describe('curriculum', () => {
       expect(spriteExists(c.sprite), c.sprite).toBe(true);
       expect(lessonIds.has(c.until), c.until).toBe(true);
     }
+  });
+
+  it('animation frames exist', () => {
+    const pets = ITEMS.filter((i) => i.category === 'pet').map((i) => i.sprite!);
+    for (const f of allAnimationSprites(pets)) expect(spriteExists(f), f).toBe(true);
+    for (const p of pets) expect(petMotion(p), p).toBeDefined();
   });
 
   it('chapter icons exist', () => {

@@ -18,6 +18,8 @@ Sheet spec fields used here:
     colors    max colors per sprite after cleanup (default 32)
     resize    resample the raw image by this factor first (fine-tunes output size)
     bgTolerance  lower (e.g. 60) also strips pink glow left from the magenta background
+    grid      [rows, cols] groups every piece by grid cell (floating hearts, smoke puffs)
+    fit       {"cells": [i, ...], "height" or "width": px} resizes so those objects come out that size
     cellScale {"name": scale} gives one object its own (possibly fractional) scale
     join      [[a, b, ...]] preview indices to glue into one object (numbering before the join)
     cropBottom fraction of each sprite's height to cut off the bottom
@@ -180,16 +182,65 @@ def slice_sheet(sheet_id: str, preview_only: bool) -> None:
     if spec.get("resize"):
         f = spec["resize"]
         src = np.array(Image.fromarray(src).resize((round(src.shape[1] * f), round(src.shape[0] * f)), Image.LANCZOS))
-    fg = ~background_mask(src, spec.get("bgTolerance", 90))
-    color, alpha = downscale(src, fg, s)
-    labels, n = components(dilate(alpha, spec.get("merge", 2)))
-    min_size = spec.get("minSize", 6)
-    boxes = []
-    for i in range(1, n + 1):
-        ys, xs = np.nonzero((labels == i) & alpha)
-        if len(ys) and max(ys.max() - ys.min(), xs.max() - xs.min()) + 1 >= min_size:
-            boxes.append((ys.min(), xs.min(), ys.max() + 1, xs.max() + 1, i))
-    boxes = reading_order(boxes)
+    def detect(src):
+        fg = ~background_mask(src, spec.get("bgTolerance", 90))
+        color, alpha = downscale(src, fg, s)
+        labels, n = components(dilate(alpha, spec.get("merge", 2)))
+        min_size = spec.get("minSize", 6)
+        boxes = []
+        for i in range(1, n + 1):
+            ys, xs = np.nonzero((labels == i) & alpha)
+            if len(ys) and max(ys.max() - ys.min(), xs.max() - xs.min()) + 1 >= min_size:
+                boxes.append((ys.min(), xs.min(), ys.max() + 1, xs.max() + 1, i))
+        return color, alpha, labels, reading_order(boxes)
+
+    def to_grid(color, alpha, labels, boxes):
+        """Group every piece by the grid cell its center falls in (for sheets laid out as a grid)."""
+        rows, cols = spec["grid"]
+        h, w = alpha.shape
+        cell_id = (np.arange(h)[:, None] * rows // h) * cols + (np.arange(w)[None, :] * cols // w)
+        split = []
+        for b in boxes:  # a piece that crosses a cell boundary (frames touching) is cut along it
+            mask = labels == b[4]
+            ids = np.unique(cell_id[mask])
+            if len(ids) == 1:
+                split.append(b)
+                continue
+            for c in ids:
+                part = mask & (cell_id == c)
+                if part.sum() < 4:
+                    labels[part] = 0
+                    continue
+                new = labels.max() + 1
+                labels[part] = new
+                ys, xs = np.nonzero(part)
+                split.append((ys.min(), xs.min(), ys.max() + 1, xs.max() + 1, new))
+        boxes = split
+        cells_of = {}
+        for b in boxes:
+            cy, cx = (b[0] + b[2]) / 2, (b[1] + b[3]) / 2
+            cells_of.setdefault((int(cy * rows / h), int(cx * cols / w)), []).append(b)
+        out = []
+        for key in sorted(cells_of):
+            group = cells_of[key]
+            main = group[0][4]
+            for b in group[1:]:
+                labels[labels == b[4]] = main
+            out.append((min(b[0] for b in group), min(b[1] for b in group), max(b[2] for b in group), max(b[3] for b in group), main))
+        return color, alpha, labels, out
+
+    color, alpha, labels, boxes = detect(src)
+    if spec.get("grid"):
+        color, alpha, labels, boxes = to_grid(color, alpha, labels, boxes)
+    if spec.get("fit"):  # resize so the chosen objects come out at a known size (to match existing sprites)
+        fit = spec["fit"]
+        dim = (lambda b: b[2] - b[0]) if "height" in fit else (lambda b: b[3] - b[1])
+        have = float(np.median([dim(boxes[i]) for i in fit["cells"] if i < len(boxes)]))
+        f = fit.get("height", fit.get("width")) / have
+        src = np.array(Image.fromarray(src).resize((round(src.shape[1] * f), round(src.shape[0] * f)), Image.LANCZOS))
+        color, alpha, labels, boxes = detect(src)
+        if spec.get("grid"):
+            color, alpha, labels, boxes = to_grid(color, alpha, labels, boxes)
     for group in spec.get("join", []):  # glue multi-piece objects (preview numbering)
         first = group[0]
         for k in group[1:]:

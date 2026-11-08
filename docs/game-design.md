@@ -56,6 +56,7 @@ Replaying lesson 1 forever earns about 9 gold a run, so grinding is slow. The re
 - Fixing lessons (chapter 2) put the fixed furniture back in the room where the broken one stood.
 - Pets come from big moments: kitten (spider), owl (mouse), bunny (flowers), frog (bulldog), fox (goose), baby dragon (final dragon). The first pet is equipped automatically.
 - Pet outfits (scarf, wizard hat, flower crown) are sold once you have the pet.
+- Pets wander the room: they sit for a while, then walk (kitten, fox), hop (bunny, frog) or fly (owl, baby dragon) somewhere new. Tap a pet and it hops. In lessons the pet follows the wizard.
 
 ## The room
 
@@ -108,8 +109,7 @@ Battles are never failable: spells fill the creature's heart meter until it chee
 
 ## Open ideas
 
-- Pets (and the wizard) wandering around the room.
-- A few animation frames for the battle creatures.
+- The wizard walking around the room.
 - Daily "practice spell" bonus to reward short regular practice without big gold.
 - A reading-free intro (audio voice-over) for younger kids.
 - More chapters: punctuation like `:` `-` `( )`, longer paragraphs, timed challenges.

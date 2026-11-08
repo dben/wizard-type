@@ -1,0 +1,39 @@
+{
+  "style": false,
+  "prompt": "Animation frames for a pixel art game, made from the reference image. Use EXACTLY the same bunny design, colors, outline, pixel size and outfits as the reference. Four rows of four frames on a flat magenta (#FF00FF) background, every frame the same scale and facing RIGHT, with empty space between frames. In every row, frame 1 is the bunny SITTING exactly like the reference, and frames 2, 3 and 4 are a hopping cycle (crouch, leap through the air, land), moving to the right. Row 1: the bunny plain, no clothes. Row 2: the bunny wearing the scarf from the reference. Row 3: the bunny wearing the tiny wizard hat from the reference. Row 4: the bunny wearing the flower crown from the reference. No text, no shadows, no ground, no new objects.",
+  "aspect": "1:1",
+  "reference": [
+    "ref-pet-bunny"
+  ],
+  "category": "pets",
+  "scale": 4,
+  "merge": 0,
+  "cells": [
+    "bunny-plain",
+    "bunny-plain-walk-1",
+    "bunny-plain-walk-2",
+    "bunny-plain-walk-3",
+    "bunny-scarf",
+    "bunny-scarf-walk-1",
+    "bunny-scarf-walk-2",
+    "bunny-scarf-walk-3",
+    "bunny-hat",
+    "bunny-hat-walk-1",
+    "bunny-hat-walk-2",
+    "bunny-hat-walk-3",
+    "bunny-flowers",
+    "bunny-flowers-walk-1",
+    "bunny-flowers-walk-2",
+    "bunny-flowers-walk-3"
+  ],
+  "fit": {
+    "cells": [
+      0
+    ],
+    "height": 56
+  },
+  "grid": [
+    4,
+    4
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "style": false,
+  "prompt": "Animation frames for a pixel art game, made from the reference image. Use EXACTLY the same dragon design, colors, outline, pixel size and outfits as the reference. Four rows of four frames on a flat magenta (#FF00FF) background, every frame the same scale and facing RIGHT, with empty space between frames. In every row, frame 1 is the dragon SITTING exactly like the reference, and frames 2, 3 and 4 are FLYING to the right with its little wings spread wide: frame 2 wings UP, frame 3 wings LEVEL, frame 4 wings DOWN, body tilted forward, legs tucked in. Row 1: the dragon plain, no clothes. Row 2: the dragon wearing the scarf from the reference. Row 3: the dragon wearing the tiny wizard hat from the reference. Row 4: the dragon wearing the flower crown from the reference. No text, no shadows, no ground, no new objects.",
+  "aspect": "1:1",
+  "reference": [
+    "ref-pet-dragon"
+  ],
+  "category": "pets",
+  "scale": 4,
+  "merge": 0,
+  "cells": [
+    "dragon-plain",
+    "dragon-plain-walk-1",
+    "dragon-plain-walk-2",
+    "dragon-plain-walk-3",
+    "dragon-scarf",
+    "dragon-scarf-walk-1",
+    "dragon-scarf-walk-2",
+    "dragon-scarf-walk-3",
+    "dragon-hat",
+    "dragon-hat-walk-1",
+    "dragon-hat-walk-2",
+    "dragon-hat-walk-3",
+    "dragon-flowers",
+    "dragon-flowers-walk-1",
+    "dragon-flowers-walk-2",
+    "dragon-flowers-walk-3"
+  ],
+  "fit": {
+    "cells": [
+      0
+    ],
+    "height": 54
+  },
+  "grid": [
+    4,
+    4
+  ]
+}

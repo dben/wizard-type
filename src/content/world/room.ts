@@ -40,7 +40,7 @@ export const STORY_CLUTTER: StoryClutter[] = [
   { sprite: 'fixtures/bookshelf-broken', x: 300, y: 234, until: 'fix-shelf' },
   { sprite: 'windows/broken', x: WINDOW_SPOT.x, y: WINDOW_SPOT.y, until: 'fix-window' },
   { sprite: 'fixtures/cauldron-broken', x: 395, y: 248, until: 'fix-cauldron' },
-  { sprite: 'creatures/mouse-grumpy', x: 440, y: 264, until: 'mouse' },
+  { sprite: 'creatures/mouse-grumpy', x: 340, y: 266, until: 'mouse' },
 ];
 
 /** Creatures only appear in the room, not greyed out in other lessons. */

@@ -20,6 +20,7 @@ import { LessonScene } from '../../render/scene';
 import { Keyboard } from '../components/Keyboard';
 import { Icon, Sprite } from '../components/Sprite';
 import { Button } from '../components/bits';
+import { useIdleFrame } from '../components/useAnim';
 import { Results } from './Results';
 
 type Phase = 'intro' | 'play' | 'cheer' | 'done';
@@ -254,7 +255,7 @@ function KeyCap({ k }: { k: string }) {
 
 function Intro({ info, onStart }: { info: LessonInfo; onStart: () => void }) {
   const { lesson } = info;
-  const target = lesson.scene.targets[0].sprite;
+  const target = useIdleFrame(lesson.scene.targets[0].sprite);
   const shiftHint = lesson.newKeys.some((k) => k.length === 1 && strokeFor(k)?.shift);
   return (
     <div class="overlay">

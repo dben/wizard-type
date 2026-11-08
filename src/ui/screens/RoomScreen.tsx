@@ -16,6 +16,9 @@ import { loadSprite, sprite, spriteUrl } from '../../render/sprites';
 import { portraitUrl } from '../../render/portrait';
 import { WIZ, WIZ_CANVAS } from '../../render/wizard';
 import { Sprite } from '../components/Sprite';
+import { RoomPet } from '../components/RoomPet';
+import { useIdleFrame } from '../components/useAnim';
+import { IDLE, petMotion } from '../../content/world/animations';
 import { Button } from '../components/bits';
 
 const TABS: { cat: ItemCategory; label: string }[] = [
@@ -65,7 +68,11 @@ export function RoomScreen() {
 
   useEffect(() => {
     const paths = [...owned.map((i) => i.sprite!), ...clutter.map((c) => c.sprite), 'backgrounds/tower', ...(win ? [win] : [])];
-    if (p.equipped.pet) paths.push(item(p.equipped.pet)!.sprite!);
+    if (p.equipped.pet) {
+      const pet = item(p.equipped.pet)!.sprite!;
+      paths.push(pet, ...(petMotion(pet)?.move ?? []));
+    }
+    paths.push(...clutter.flatMap((c) => IDLE[c.sprite]?.frames ?? []));
     void Promise.all(paths.map((s) => loadSprite(s).catch(() => undefined))).then(() => setReady(true));
     void portraitUrl(p.look, p.equipped).then(setWizUrl);
   }, []);
@@ -154,9 +161,9 @@ export function RoomScreen() {
               />
             );
           })}
-          {ready && clutter.map((c) => <ClutterImg key={c.sprite + c.x} c={c} S={S} style={at(c.sprite, c.x, c.y)} onHint={setHint} />)}
+          {ready && clutter.map((c) => <ClutterImg key={c.sprite + c.x} c={c} S={S} at={at} onHint={setHint} />)}
           {ready && p.equipped.pet && (
-            <img class="px actor" src={spriteUrl(item(p.equipped.pet)!.sprite!)} alt="" style={{ ...at(item(p.equipped.pet)!.sprite!, PET_SPOT.x, PET_SPOT.y), zIndex: 2000 + PET_SPOT.y }} />
+            <RoomPet key={p.equipped.pet} path={item(p.equipped.pet)!.sprite!} startX={PET_SPOT.x} floorY={PET_SPOT.y} scale={S} />
           )}
           {wizUrl && (
             <img
@@ -216,15 +223,16 @@ export function RoomScreen() {
   );
 }
 
-function ClutterImg({ c, S, style, onHint }: { c: StoryClutter; S: number; style: Record<string, string>; onHint: (h: { x: number; y: number; text: string }) => void }) {
+function ClutterImg({ c, S, at, onHint }: { c: StoryClutter; S: number; at: (path: string, x: number, y: number) => Record<string, string>; onHint: (h: { x: number; y: number; text: string }) => void }) {
   const info = lessonInfo(c.until);
+  const frame = useIdleFrame(c.sprite, c.x);
   return (
     <img
       class="px clutter"
-      src={spriteUrl(c.sprite)}
+      src={spriteUrl(frame)}
       alt=""
       draggable={false}
-      style={{ ...style, zIndex: 2000 + c.y }}
+      style={{ ...at(frame, c.x, c.y), zIndex: 2000 + c.y }}
       onPointerDown={(e) => {
         e.stopPropagation();
         sfx.oops();

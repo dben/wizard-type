@@ -62,6 +62,13 @@ All sprites are drawn 1:1 in scene pixels. Sizes were tuned by re-slicing at dif
 - `src/content/content.test.ts`: validates all content. For each lesson it generates 30 runs and checks every prompt only uses keys learned so far, that new keys get practiced, that runs differ, and that every sprite file exists.
 - Visual checks are manual: run `npm run dev` and play.
 
+## Animation
+
+- `content/world/animations.ts` lists frames by naming convention: creature idle loops (`IDLE`, keyed by the still sprite) and pet motion (`petMotion()`: sitting sprite plus move frames, and whether the species walks, hops or flies).
+- The lesson scene swaps in the idle frame for any target that has one, and the pet sits while the wizard casts and moves along when the wizard walks.
+- In the room, `RoomPet` runs a small loop: sit for 3 to 8 seconds, pick a spot on the floor, travel there (flipped when going left), sit again. Tapping it makes it hop. Clutter creatures and the lesson intro picture use `useIdleFrame()`.
+- Frames of one animation can differ by a few pixels in size; everything is drawn from the bottom-center, so the feet stay put.
+
 ## Keyboard and hands
 
 - `ui/components/Keyboard.tsx` draws the keyboard as SVG in key units (one letter key = 1 unit). Learned keys are white, unlearned keys dim, and only the key(s) to press are colored by finger.

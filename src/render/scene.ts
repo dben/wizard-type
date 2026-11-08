@@ -10,6 +10,7 @@ import { item } from '../content/items';
 import { LOCATIONS, type LocationDef } from '../content/world/locations';
 import type { Placement } from '../game/save';
 import { WINDOW_SPOT, clutterFor, type StoryClutter } from '../content/world/room';
+import { idleFrame, IDLE, petMotion } from '../content/world/animations';
 import { createRng } from '../game/rng';
 import { loadSprite, preload, sprite } from './sprites';
 import { WIZ, WIZ_CANVAS } from './wizard';
@@ -130,8 +131,8 @@ export class LessonScene {
     const s = this.setup;
     const paths = [
       ...this.props.far.map((p) => p.s), ...this.props.near.map((p) => p.s),
-      ...s.lesson.scene.targets.flatMap((t) => [t.sprite, t.done, t.helper].filter(Boolean) as string[]),
-      s.wand, ...(s.pet ? [s.pet] : []), ...(s.lesson.scene.npc ? [s.lesson.scene.npc] : []),
+      ...s.lesson.scene.targets.flatMap((t) => [t.sprite, t.done, t.helper].filter(Boolean) as string[]).flatMap((p) => IDLE[p]?.frames ?? [p]),
+      s.wand, ...(s.pet ? [s.pet, ...(petMotion(s.pet)?.move ?? [])] : []), ...(s.lesson.scene.npc ? [s.lesson.scene.npc] : []),
       ...(this.loc.indoor
         ? ['backgrounds/tower', s.windowSprite ?? '', ...(s.clutter ?? []).map((c) => c.sprite), ...(s.room ?? []).map((p) => item(p.item)?.sprite ?? '')]
         : []),
@@ -389,7 +390,7 @@ export class LessonScene {
     const battle = this.setup.lesson.scene.mode === 'battle';
     if (t.vanish >= 1) return;
     const landed = this.countLanded(t);
-    const s = t.done && t.def.done ? t.def.done : t.def.sprite;
+    const s = idleFrame(t.done && t.def.done ? t.def.done : t.def.sprite, this.time, t.x * 0.37);
     let x = t.x - this.camX + (t.shake > 0 ? Math.round(Math.sin(this.time * 70) * 2 * t.shake) : 0);
     const y = t.y - Math.round(Math.sin(t.hop * Math.PI) * 8);
     if (battle && this.celebrating) x += Math.round(Math.sin(this.time * 3) * 2);
@@ -433,8 +434,15 @@ export class LessonScene {
     const left = WIZ_X - WIZ.headX;
 
     if (this.setup.pet) {
-      const hop = walking ? Math.round(Math.abs(Math.sin(this.time * 9 + 1)) * 4) : (Math.sin(this.time * 1.3) > 0.97 ? 3 : 0);
-      this.drawSprite(this.setup.pet, WIZ_X - 52, GROUND - hop - Math.round(jump / 2), {});
+      // Sit while the wizard casts; walk, hop or fly along when the wizard walks.
+      const motion = petMotion(this.setup.pet);
+      let frame = this.setup.pet;
+      let lift = Math.sin(this.time * 1.3) > 0.97 ? 3 : 0;
+      if (walking && motion) {
+        frame = motion.move[Math.floor(this.time * motion.fps) % motion.move.length];
+        lift = motion.style === 'fly' ? 16 + Math.round(Math.sin(this.time * 6) * 3) : motion.style === 'hop' ? Math.round(Math.abs(Math.sin(this.time * 6)) * 6) : 0;
+      }
+      this.drawSprite(frame, WIZ_X - 52, GROUND - lift - Math.round(jump / 2), {});
     }
     c.fillStyle = 'rgba(0,0,0,0.15)';
     c.fillRect(WIZ_X - 22, GROUND - 2, 44, 3);

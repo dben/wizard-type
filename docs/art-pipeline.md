@@ -56,11 +56,28 @@ What the slicer does: removes magenta and magenta-tinted fringe, shrinks by `sca
 | `join` | `[[a, b]]` glue preview objects `a` and `b` into one (broken fence pieces). |
 | `bgTolerance` | Lower to strip pink glow left by the magenta background. Too low eats purples. |
 | `trim` | `false` keeps the full frame (wizard bases, so they line up). |
+| `grid` | `[rows, cols]` group pieces by grid cell; cuts touching frames apart (animation sheets). |
+| `fit` | `{"cells": [i, ...], "height" or "width": px}` resize so those objects come out at that size. |
 | `cellScale` | `{"name": scale}` gives one object its own scale, fractions allowed (crown, beanie). |
 | `fillHoles` | Fill see-through pockets inside an object, like the inside of a hat brim. |
 | `cropBottom` | Cut this fraction off the bottom of every sprite (mushroom stems). |
 | `cutBottomOval` | `[wfrac, hfrac]` cut an outlined oval out of the bottom so a head shows through (mushroom caps use `[0.68, 0.16]`). |
 | `kind: "background"` + `out` + `size` | Full-image backgrounds instead of sprite sheets. |
+
+## Animations
+
+Creatures and pets are animated with frames generated as edits of their existing art.
+
+1. Build a reference from the current sprites: `python3 tools/art/make_ref.py ref-<name> <sprite> <sprite> ...` (sprites side by side, 4x, on magenta).
+2. Write an `anim-<name>` sheet that passes that reference and asks for a grid of frames ("same design, same size, facing left").
+3. Slice with `grid` (pieces are grouped by grid cell, so floating hearts and smoke stay with their frame, and touching frames are cut apart) and `fit` (scale so the first frames match the old sprite's height).
+
+| Sheets | Layout | Frames |
+| --- | --- | --- |
+| `anim-<creature>` | 2 rows × 3 | `<c>-grumpy`, `-2`, `-3`, then `<c>-happy`, `-2`, `-3` |
+| `anim-pet-<species>` | 4 rows × 4 (plain, scarf, hat, flowers) | sitting `<p>-<outfit>`, then `-walk-1..3` |
+
+The first frame of each row replaces the old still sprite, so every frame in a set matches. The code side lives in `src/content/world/animations.ts`: creature idle loops play 1-2-3-2; kittens and foxes walk, bunnies and frogs hop, owls and baby dragons fly (the game also bobs flyers up and down).
 
 ## The wizard
 
@@ -75,6 +92,7 @@ The key has a $10 monthly limit.
 
 | Date | Spent | What |
 | --- | --- | --- |
+| 2026-11-08 | ~$1.05 | Animations: 9 creature idle sheets, 6 pet sit/move sheets (owl and dragon redone as flying). |
 | 2026-11-08 | ~$1.14 | Second pass: 5 candidate wizard bases (try 3 kept) + 6 new hair edits, wide windows (2 tries), plants, knick-knacks, decor color variants, stemless mushroom hats. |
 | 2026-11-08 | ~$2.32 | Initial set: 29 sheets (hats, wands, 3 pet sheets, 2 furniture, 2 decor, rugs, fixtures, clutter, 2 creature sheets, dragon, village, villagers, 2 prop sheets, UI icons, tower and map backgrounds, wizard base + 6 hair styles). furniture-a was generated twice. Includes model tests. |
 
