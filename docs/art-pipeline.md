@@ -83,7 +83,7 @@ The first frame of each row replaces the old still sprite, so every frame in a s
 
 - `wizard-base` was generated first (using `villagers-a` as the style reference, for kid proportions instead of chibi), then each `wizard-hair-*` sheet edited that image ("same character, same pose, change only the hair"). The poses line up, so one set of anchors (head, hand, feet) in `src/render/wizard.ts` works for all of them.
 - Bases are sliced with `scale: 8` and `resize: 0.75` into a 96 px frame; the kid is about 84 px tall, a little shorter than the villagers.
-- Bases use key colors: bright green hair, peach skin, light grey robe. The game re-tints those pixels at runtime, which is how skin tone, hair color and robes work without extra art.
+- Bases use key colors: bright green hair, peach skin, light grey robe. `python3 tools/art/wizard_roles.py` writes a mask next to each base (`base-<hair>-roles.png`: red skin, green hair, blue robe), and the game recolors only masked pixels. That's how skin tone, hair color and robes work without extra art. Re-run it after re-slicing the bases and check the masks by eye: eye whites, boots, the belt and outlines should stay unmarked.
 - Hats sit at the head anchor; `hatOffset` on a hat item nudges it down. Hair above the brim is erased so it can't poke through.
 
 ## Budget log
