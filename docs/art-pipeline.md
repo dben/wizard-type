@@ -62,7 +62,8 @@ What the slicer does: removes magenta and magenta-tinted fringe, shrinks by `sca
 | `fillHoles` | Fill see-through pockets inside an object, like the inside of a hat brim. |
 | `cropBottom` | Cut this fraction off the bottom of every sprite (mushroom stems). |
 | `cutBottomOval` | `[wfrac, hfrac]` cut an outlined oval out of the bottom so a head shows through (mushroom caps use `[0.68, 0.16]`). |
-| `kind: "background"` + `out` + `size` | Full-image backgrounds instead of sprite sheets. |
+| `imageSize` | `"2K"` or `"4K"` asks the model for a bigger image (default 1K, 1376 × 768 for 16:9). 2K gives 2752 × 1536 and costs about $0.10 instead of $0.07. |
+| `kind: "background"` + `out` + `size` | Full-image backgrounds instead of sprite sheets. Output is `size`, median-downscaled by `scale`. |
 
 ## Animations
 
@@ -86,12 +87,20 @@ The first frame of each row replaces the old still sprite, so every frame in a s
 - Bases use key colors: bright green hair, peach skin, light grey robe. `python3 tools/art/wizard_roles.py` writes a mask next to each base (`base-<hair>-roles.png`: red skin, green hair, blue robe), and the game recolors only masked pixels. That's how skin tone, hair color and robes work without extra art. Re-run it after re-slicing the bases and check the masks by eye: eye whites, boots, the belt and outlines should stay unmarked.
 - Hats sit at the head anchor; `hatOffset` on a hat item nudges it down. Hair above the brim is erased so it can't poke through.
 
+## Backgrounds
+
+- `bg-map` and `bg-tower` are generated at 2K and kept at high resolution (map 1376 × 768, room 960 × 540) instead of being shrunk to sprite scale. The game draws them with smooth scaling.
+- `bg-map` passes `ref-map-v1` (the first, low-res map) as a layout reference so the redraw keeps the same places. After regenerating, re-trace `MAP_TRAIL` (see architecture.md).
+- `bg-tower` asks for an empty octagonal room in one-point perspective. The prompt is explicit about a flat back wall about half the picture wide; shorter prompts gave a plain box. Two tries cost $0.20.
+- Windows were re-sliced at `scale: 5` (from 3) to come out about 100 × 60, so they fit the 192 px back wall.
+
 ## Budget log
 
-The key has a $10 monthly limit.
+The key has a $10 monthly limit; about $5.02 was left after 2026-11-09.
 
 | Date | Spent | What |
 | --- | --- | --- |
+| 2026-11-09 | ~$0.37 | Third pass: 2K map redraw, 2 octagonal room tries (second kept), armchair at eye level (4 candidates, first kept). |
 | 2026-11-08 | ~$1.05 | Animations: 9 creature idle sheets, 6 pet sit/move sheets (owl and dragon redone as flying). |
 | 2026-11-08 | ~$1.14 | Second pass: 5 candidate wizard bases (try 3 kept) + 6 new hair edits, wide windows (2 tries), plants, knick-knacks, decor color variants, stemless mushroom hats. |
 | 2026-11-08 | ~$2.32 | Initial set: 29 sheets (hats, wands, 3 pet sheets, 2 furniture, 2 decor, rugs, fixtures, clutter, 2 creature sheets, dragon, village, villagers, 2 prop sheets, UI icons, tower and map backgrounds, wizard base + 6 hair styles). furniture-a was generated twice. Includes model tests. |
@@ -102,4 +111,6 @@ The key has a $10 monthly limit.
 - The first window sheet also had stained-glass and flower-box styles, but it was regenerated wider and those are gone. Generate a `windows-b` sheet to add more styles.
 - The hats sheet's mushroom (with stem) is skipped; mushroom hats come from `hats-b`.
 - The mushroom lamp in `decor-a` kept a pink halo and is not exported.
+- The armchair comes from `armchair-a`; `furniture-a` skips its own armchair so re-slicing doesn't overwrite it. The star icons were dropped from `ui-a`; stars are drawn as SVG.
+- Other furniture is drawn from a slightly higher angle than the armchair. Regenerate it in an eye-level sheet if it starts to look off in the new room.
 - The dragon on the map background is green; the battle dragon is red.

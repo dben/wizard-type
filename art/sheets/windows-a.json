@@ -5,7 +5,7 @@
     "hats-a"
   ],
   "category": "windows",
-  "scale": 3,
+  "scale": 5,
   "merge": 1,
   "cells": [
     "broken",
@@ -16,6 +16,6 @@
     "starry"
   ],
   "cellScale": {
-    "broken": 3.4
+    "broken": 5.7
   }
 }

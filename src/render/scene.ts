@@ -9,11 +9,12 @@ import type { LessonDef, TargetDef } from '../content/types';
 import { item } from '../content/items';
 import { LOCATIONS, type LocationDef } from '../content/world/locations';
 import type { Placement } from '../game/save';
-import { WINDOW_SPOT, clutterFor, type StoryClutter } from '../content/world/room';
+import { ROOM_H, ROOM_W, WINDOW_SPOT, clutterFor, type StoryClutter } from '../content/world/room';
 import { idleFrame, IDLE, petMotion } from '../content/world/animations';
 import { createRng } from '../game/rng';
 import { loadSprite, preload, sprite } from './sprites';
 import { WIZ, WIZ_CANVAS } from './wizard';
+import { drawWand, wandTipOffset } from './wand';
 
 export const VIEW_W = 480;
 export const VIEW_H = 200;
@@ -22,7 +23,7 @@ const GROUND = 186;
 const WIZ_X = 92;
 const TARGET_GAP = 240;
 const FIRST_TARGET_X = 330;
-const ROOM_SHIFT = -70; // the tower background is 270 tall; show its bottom part
+const ROOM_SHIFT = -70; // the room is 270 tall; show its bottom part (back wall below the beams, and the floor)
 
 interface TargetState {
   def: TargetDef;
@@ -307,7 +308,8 @@ export class LessonScene {
   private drawRoom() {
     const c = this.ctx;
     const bg = sprite('backgrounds/tower');
-    if (bg) c.drawImage(bg, 0, ROOM_SHIFT);
+    // The room is painted at twice the sprite resolution; draw it at room size.
+    if (bg) c.drawImage(bg, 0, ROOM_SHIFT, ROOM_W, ROOM_H);
     else {
       c.fillStyle = '#7a6a66';
       c.fillRect(0, 0, VIEW_W, VIEW_H);
@@ -449,13 +451,7 @@ export class LessonScene {
     c.drawImage(this.setup.wizard, left, top, WIZ_CANVAS.w, WIZ_CANVAS.h);
 
     const wand = sprite(this.setup.wand);
-    if (wand) {
-      c.save();
-      c.translate(left + WIZ.handX, top + WIZ.padTop + WIZ.handY);
-      c.rotate(this.wandAngle());
-      c.drawImage(wand, -Math.round(wand.width / 2), -wand.height + 6);
-      c.restore();
-    }
+    if (wand) drawWand(c, wand, left + WIZ.handX, top + WIZ.padTop + WIZ.handY, this.wandAngle());
   }
 
   private wandAngle() {
@@ -464,12 +460,10 @@ export class LessonScene {
 
   /** Wand tip in screen coordinates. */
   private wandTip(): [number, number] {
-    const wand = sprite(this.setup.wand);
-    const len = (wand?.height ?? 40) - 6;
-    const a = this.wandAngle();
+    const [dx, dy] = wandTipOffset(sprite(this.setup.wand), this.wandAngle());
     const hx = WIZ_X - WIZ.headX + WIZ.handX;
     const hy = GROUND - WIZ.feetY + WIZ.handY;
-    return [hx + Math.sin(a) * len, hy - Math.cos(a) * len];
+    return [hx + dx, hy + dy];
   }
 
   private drawBolts() {
@@ -561,6 +555,9 @@ const rand = (a: number, b: number) => a + Math.random() * (b - a);
 const pick = <T,>(l: T[]) => l[Math.floor(Math.random() * l.length)];
 const mod = (a: number, n: number) => ((a % n) + n) % n;
 const LAYERS: Record<string, number> = { window: 0, rug: 0, wall: 1, furniture: 2, decor: 3 };
+/** Room stacking: furniture and decor sort by depth; the pet and the wizard always stand in front of everything. */
+export const Z_PET = 8000;
+export const Z_WIZARD = 9000;
 export const layer = (p: Placement) => LAYERS[item(p.item)?.category ?? 'decor'] ?? 3;
 
 function hazeOf(color: string) {

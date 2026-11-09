@@ -32,14 +32,27 @@ src/content  (data)  ──►  src/game  (pure rules)  ──►  src/ui + src/
 - **render**:
   - `scene.ts`: the lesson scene. The lesson screen sends it events (`keySparkle`, `oops`, `poof`, `cast`, `celebrate`); it never decides rules.
   - `wizard.ts`: builds the wizard from a base sprite per hair style. The bases are drawn with key colors (green hair, peach skin, grey robe); pixels are classified by color and snapped to a 5-step shade ramp of the chosen skin, hair or robe color (flat steps keep the pixel art clean; smooth tinting looked blotchy). Robe patterns and hem trim are stamped onto robe pixels. Then the hat goes on: hair above the brim and outside the hat's outline is erased (per column, only above the hat's lowest pixel), and the hat is drawn at the head anchor.
+  - `wand.ts`: finds where each wand is held by measuring its pixels (grip point and, for the feather, its lean), so every wand sits in the hand and the sparks leave from the real tip. Used by `scene.ts` and `portrait.ts`.
   - `portrait.ts`: cached data-URL portraits for menus.
 
 ## Scene layout
 
 - Logical size 480 × 200, drawn at 2× into the canvas and scaled with CSS (`image-rendering: pixelated`).
-- Indoor (tower): painted background, the chosen window, the kid's own room decorations, other lessons' mess greyed out, and this lesson's targets standing where its mess is in the room (`clutterFor()` in `content/world/room.ts`).
+- Indoor (tower): painted background (see Room geometry), the chosen window, the kid's own room decorations, other lessons' mess greyed out, and this lesson's targets standing where its mess is in the room (`clutterFor()` in `content/world/room.ts`).
 - Outdoor: sky gradient, two procedural hill lines, hazy far props (parallax 0.55), ground strip, near props. Targets are spaced 240 px apart and the camera pans to the next one when a target is done, so the wizard appears to walk.
 - Spells are shared evenly across a lesson's targets. Battles have a single target with a heart meter.
+
+## Room geometry
+
+The tower is an octagon seen from inside: a flat back wall facing the player, two angled walls on each side, and a trapezoid floor that widens toward the player. `src/content/world/room.ts` holds the numbers in room pixels (480 × 270): `BACK_WALL`, `FLOOR_TOP`, and `floorSpan(y)` for the floor's left and right edge at any depth. `content.test.ts` checks that wall mess sits on the back wall, floor mess and gifts sit on the floor, and the window fits.
+
+`backgrounds/tower.png` is 960 × 540, twice the room size, so the walls carry fine detail while sprites stay chunky. The scene draws it at room size; the room screen scales it with smooth filtering (`.smooth`). The lesson scene shows the bottom 200 rows of the room (`ROOM_SHIFT`), so the beams are cut off there.
+
+If the background is regenerated, re-measure the back wall and floor corners (overlay a polygon on the sliced PNG) and update `room.ts`.
+
+## World map
+
+`backgrounds/map.png` is 1376 × 768 and scales smoothly. Lesson nodes sit on `MAP_TRAIL` in `content/world/mapPath.ts`, a polyline traced by eye over the painted path; re-trace it when the map is regenerated. Stars on the map and in results are SVG shapes (`StarShape` in `ui/components/bits.tsx`) with a fixed black border, not sprites.
 
 ## Sizes and pixel scale
 
@@ -49,7 +62,7 @@ All sprites are drawn 1:1 in scene pixels. Sizes were tuned by re-slicing at dif
 | --- | --- |
 | Wizard (frame) | 96 × 96 (the kid is 84 tall), plus 40 px above for hats |
 | Hats | about 50 wide |
-| Big window | about 160 × 100 |
+| Big window | about 100 × 60 |
 | Pets | 40 tall |
 | Furniture | 40 to 80 tall |
 | Little decor | 25 to 35 |

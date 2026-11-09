@@ -16,7 +16,7 @@ export function MapScreen() {
   return (
     <main class="screen map-screen">
       <div class="map" style={{ aspectRatio: `${MAP_W} / ${MAP_H}` }}>
-        <img class="px map-bg" src={spriteUrl('backgrounds/map')} alt="" draggable={false} />
+        <img class="map-bg" src={spriteUrl('backgrounds/map')} alt="" draggable={false} />
         <svg class="trail" viewBox={`0 0 ${MAP_W} ${MAP_H}`}>
           <polyline points={POINTS.map((pt) => pt.join(',')).join(' ')} />
         </svg>
@@ -39,7 +39,7 @@ export function MapScreen() {
               <span class="num">{open ? i + 1 : <Icon name="lock" size={16} />}</span>
               {rec && rec.stars > 0 && (
                 <span class="node-stars">
-                  <Stars count={rec.stars} size={12} />
+                  <Stars count={rec.stars} size={20} />
                 </span>
               )}
             </button>

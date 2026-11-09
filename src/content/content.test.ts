@@ -1,10 +1,10 @@
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { generateSpells, isOnKeyboard, isTypeable } from '../game/generator';
 import { createRng } from '../game/rng';
 import { CHAPTERS, LESSONS } from './curriculum';
-import { STORY_CLUTTER, clutterFor } from './world/room';
+import { BACK_WALL, FLOOR_TOP, GIFT_SPOTS, PET_SPOT, ROOM_H, ROOM_W, STORY_CLUTTER, WINDOW_SPOT, WIZARD_SPOT, clutterFor, floorSpan, isWallClutter } from './world/room';
 import { allAnimationSprites, petMotion } from './world/animations';
 import { HAIR_STYLES } from './world/looks';
 import { ITEMS, STARTER_ITEMS, item } from './items';
@@ -12,6 +12,11 @@ import { STAR_GOLD } from '../game/scoring';
 
 const spriteExists = (s: string) => existsSync(resolve(__dirname, '../../public/sprites', `${s}.png`));
 const lessonIds = new Set(LESSONS.map((l) => l.lesson.id));
+/** Sprite size, read from the PNG header. */
+const spriteSize = (s: string) => {
+  const b = readFileSync(resolve(__dirname, '../../public/sprites', `${s}.png`));
+  return { w: b.readUInt32BE(16), h: b.readUInt32BE(20) };
+};
 
 describe('curriculum', () => {
   it('has unique lesson ids', () => {
@@ -91,6 +96,50 @@ describe('curriculum', () => {
     for (const c of STORY_CLUTTER) {
       expect(spriteExists(c.sprite), c.sprite).toBe(true);
       expect(lessonIds.has(c.until), c.until).toBe(true);
+    }
+  });
+
+  it('puts wall mess on the back wall and floor mess on the floor', () => {
+    for (const c of STORY_CLUTTER) {
+      const { w, h } = spriteSize(c.sprite);
+      if (isWallClutter(c)) {
+        expect(c.x - w / 2, `${c.sprite} left`).toBeGreaterThanOrEqual(BACK_WALL.x0 - 12);
+        expect(c.x + w / 2, `${c.sprite} right`).toBeLessThanOrEqual(BACK_WALL.x1 + 12);
+        expect(c.y - h, `${c.sprite} top`).toBeGreaterThanOrEqual(BACK_WALL.y0 - 2);
+        expect(c.y, `${c.sprite} bottom`).toBeLessThanOrEqual(BACK_WALL.y1);
+      } else {
+        const [lo, hi] = floorSpan(c.y);
+        expect(c.y, c.sprite).toBeGreaterThan(FLOOR_TOP);
+        expect(c.y, c.sprite).toBeLessThanOrEqual(ROOM_H);
+        expect(c.x, c.sprite).toBeGreaterThanOrEqual(lo);
+        expect(c.x, c.sprite).toBeLessThanOrEqual(hi);
+      }
+    }
+  });
+
+  it('keeps the window, gifts, wizard and pet inside the room', () => {
+    const { w, h } = spriteSize('windows/meadow');
+    expect(WINDOW_SPOT.x - w / 2).toBeGreaterThanOrEqual(BACK_WALL.x0);
+    expect(WINDOW_SPOT.x + w / 2).toBeLessThanOrEqual(BACK_WALL.x1);
+    expect(WINDOW_SPOT.y - h).toBeGreaterThanOrEqual(BACK_WALL.y0);
+    expect(WINDOW_SPOT.y).toBeLessThanOrEqual(BACK_WALL.y1);
+    for (const [id, spot] of Object.entries({ ...GIFT_SPOTS, wizard: WIZARD_SPOT, pet: PET_SPOT })) {
+      const [lo, hi] = floorSpan(spot.y);
+      expect(spot.x, id).toBeGreaterThanOrEqual(lo);
+      expect(spot.x, id).toBeLessThanOrEqual(hi);
+      expect(spot.y, id).toBeGreaterThan(FLOOR_TOP);
+    }
+  });
+
+  it('floor gets wider toward the front and is symmetrical', () => {
+    expect(floorSpan(FLOOR_TOP)).toEqual([BACK_WALL.x0, BACK_WALL.x1]);
+    expect(floorSpan(ROOM_H)).toEqual([0, ROOM_W]);
+    let last = 0;
+    for (let y = FLOOR_TOP; y <= ROOM_H; y += 3) {
+      const [lo, hi] = floorSpan(y);
+      expect(hi - lo).toBeGreaterThanOrEqual(last);
+      expect(lo + hi).toBe(ROOM_W);
+      last = hi - lo;
     }
   });
 

@@ -8,10 +8,10 @@ import { currentProfile, go, update } from '../../app/store';
 import { lessonInfo } from '../../content/curriculum';
 import { item } from '../../content/items';
 import type { ItemCategory, ItemDef } from '../../content/types';
-import { FLOOR_TOP, PET_SPOT, ROOM_H, ROOM_W, WINDOW_SPOT, WIZARD_SPOT, type StoryClutter } from '../../content/world/room';
+import { BACK_WALL, FLOOR_TOP, PET_SPOT, ROOM_H, ROOM_W, WINDOW_SPOT, WIZARD_SPOT, floorSpan, type StoryClutter } from '../../content/world/room';
 import { chooseWindow, isDone, roomClutter, windowSprite } from '../../game/progress';
 import type { Placement } from '../../game/save';
-import { layer } from '../../render/scene';
+import { Z_WIZARD, layer } from '../../render/scene';
 import { loadSprite, sprite, spriteUrl } from '../../render/sprites';
 import { portraitUrl } from '../../render/portrait';
 import { WIZ, WIZ_CANVAS } from '../../render/wizard';
@@ -37,17 +37,24 @@ const FlipIcon = () => (
   </svg>
 );
 
-const DEFAULT_Y: Record<string, number> = { rug: 252, furniture: 246, wall: 130, decor: 200 };
+const DEFAULT_Y: Record<string, number> = { rug: 252, furniture: 246, wall: 100, decor: 200 };
 
+/** Keeps an item where its kind belongs: wall decor on the back wall, furniture on the floor. */
 function clamp(it: ItemDef, x: number, y: number): [number, number] {
   const img = it.sprite ? sprite(it.sprite) : undefined;
   const w = img?.width ?? 32;
   const h = img?.height ?? 32;
-  const [ymin, ymax] =
-    it.category === 'rug' ? [FLOOR_TOP + 12, ROOM_H] :
-    it.category === 'furniture' ? [FLOOR_TOP + 4, ROOM_H] :
-    it.category === 'wall' ? [h + 4, FLOOR_TOP - 4] : [h + 4, ROOM_H];
-  return [Math.round(Math.max(w / 2, Math.min(ROOM_W - w / 2, x))), Math.round(Math.max(ymin, Math.min(ymax, y)))];
+  const between = (v: number, lo: number, hi: number) => Math.round(Math.max(lo, Math.min(hi, v)));
+  if (it.category === 'wall') {
+    return [between(x, BACK_WALL.x0 + w / 2, BACK_WALL.x1 - w / 2), between(y, BACK_WALL.y0 + h, BACK_WALL.y1 - 6)];
+  }
+  if (it.category === 'furniture') {
+    const fy = between(y, FLOOR_TOP + 4, ROOM_H);
+    const [lo, hi] = floorSpan(fy);
+    return [between(x, Math.max(w / 2, lo), Math.min(ROOM_W - w / 2, hi)), fy];
+  }
+  const ymin = it.category === 'rug' ? FLOOR_TOP + h * 0.8 : h + 4;
+  return [between(x, w / 2, ROOM_W - w / 2), between(y, ymin, ROOM_H)];
 }
 
 export function RoomScreen() {
@@ -110,8 +117,9 @@ export function RoomScreen() {
     e.stopPropagation();
     setSelected(pl.uid);
     setHint(null);
-    dragStart.current = { px: e.clientX, py: e.clientY, x: pl.x, y: pl.y };
-    setDrag({ uid: pl.uid, x: pl.x, y: pl.y });
+    const { x, y } = pos(pl);
+    dragStart.current = { px: e.clientX, py: e.clientY, x, y };
+    setDrag({ uid: pl.uid, x, y });
     (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
   };
   const onPointerMove = (e: PointerEvent, pl: Placement) => {
@@ -127,7 +135,13 @@ export function RoomScreen() {
   };
 
   const sel = p.room.find((r) => r.uid === selected);
-  const pos = (pl: Placement) => (drag?.uid === pl.uid ? drag : pl);
+  // Saved spots from older rooms are pulled onto the wall or floor where they belong.
+  const pos = (pl: Placement) => {
+    if (drag?.uid === pl.uid) return drag;
+    const it = item(pl.item);
+    const [x, y] = it?.sprite && ready ? clamp(it, pl.x, pl.y) : [pl.x, pl.y];
+    return { x, y };
+  };
   const sorted = [...p.room].sort((a, b) => layer(a) - layer(b) || pos(a).y - pos(b).y);
   const S = scale;
 
@@ -141,7 +155,7 @@ export function RoomScreen() {
     <main class="screen room-screen">
       <div class="room-box" ref={box}>
         <div class="room" style={{ width: `${ROOM_W * S}px`, height: `${ROOM_H * S}px` }} onPointerDown={() => (setSelected(null), setHint(null))}>
-          <img class="px room-bg" src={spriteUrl('backgrounds/tower')} alt="" draggable={false} />
+          <img class="room-bg" src={spriteUrl('backgrounds/tower')} alt="" draggable={false} />
           {ready && win && <img class="px clutter" src={spriteUrl(win)} alt="" draggable={false} style={{ ...at(win, WINDOW_SPOT.x, WINDOW_SPOT.y), zIndex: 900, pointerEvents: 'none' }} />}
           {ready && sorted.map((pl) => {
             const it = item(pl.item);
@@ -171,7 +185,7 @@ export function RoomScreen() {
               src={wizUrl}
               alt=""
               // Flipped so the wizard faces into the room.
-              style={{ transform: 'scaleX(-1)', left: `${(WIZARD_SPOT.x - (WIZ_CANVAS.w + 16 - WIZ.headX)) * S}px`, top: `${(WIZARD_SPOT.y - WIZ.feetY - WIZ.padTop) * S}px`, width: `${(WIZ_CANVAS.w + 16) * S}px`, zIndex: 2000 + WIZARD_SPOT.y }}
+              style={{ transform: 'scaleX(-1)', left: `${(WIZARD_SPOT.x - (WIZ_CANVAS.w + 16 - WIZ.headX)) * S}px`, top: `${(WIZARD_SPOT.y - WIZ.feetY - WIZ.padTop) * S}px`, width: `${(WIZ_CANVAS.w + 16) * S}px`, zIndex: Z_WIZARD }}
             />
           )}
           {sel && !drag && (

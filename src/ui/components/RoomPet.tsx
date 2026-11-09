@@ -5,6 +5,7 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { petMotion } from '../../content/world/animations';
 import { ROOM_W } from '../../content/world/room';
+import { Z_PET } from '../../render/scene';
 import { sprite, spriteUrl } from '../../render/sprites';
 import { sfx } from '../../audio/sfx';
 
@@ -75,7 +76,7 @@ export function RoomPet({ path, startX, floorY, scale }: { path: string; startX:
         left: `${(s.x - img.width / 2) * S}px`,
         top: `${(floorY - img.height - lift) * S}px`,
         width: `${img.width * S}px`,
-        zIndex: 2000 + floorY,
+        zIndex: Z_PET,
         transform: s.dir < 0 ? 'scaleX(-1)' : undefined,
       }}
       onPointerDown={(e) => {

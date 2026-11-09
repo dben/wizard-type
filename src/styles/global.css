@@ -82,6 +82,12 @@ h1, h2, h3 { font-family: var(--font-head); margin: 0; line-height: 1.1; }
 }
 .tab.on { background: var(--gold); }
 .stars { display: inline-flex; gap: 2px; align-items: center; }
+.star { display: inline-block; vertical-align: middle; overflow: visible; }
+.star polygon { stroke: #000; stroke-width: 2.2; stroke-linejoin: round; }
+.star-on polygon { fill: #ffd23f; }
+.star-off polygon { fill: #d8d2e2; }
+/* Painted backgrounds are higher resolution than the sprites, so they scale smoothly. */
+.smooth { image-rendering: auto; }
 .gold { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-head); font-size: 22px; }
 
 /* ---------- Top bar ---------- */
@@ -135,9 +141,9 @@ h1, h2, h3 { font-family: var(--font-head); margin: 0; line-height: 1.1; }
 /* ---------- Map ---------- */
 .map-screen { padding: 10px; }
 .map { position: relative; width: min(100%, calc((100vh - 200px) * 688 / 384)); border: 5px solid var(--wood); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
-.map-bg { width: 100%; height: 100%; display: block; }
+.map-bg { width: 100%; height: 100%; display: block; image-rendering: auto; }
 .trail { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
-.trail polyline { fill: none; stroke: #fff6d8; stroke-width: 3; stroke-dasharray: 2 6; stroke-linecap: round; opacity: 0.85; }
+.trail polyline { fill: none; stroke: #fff6d8; stroke-width: 5; stroke-dasharray: 3 11; stroke-linecap: round; opacity: 0.85; }
 .node {
   position: absolute; transform: translate(-50%, -50%);
   width: clamp(26px, 3.6vw, 40px); height: clamp(26px, 3.6vw, 40px);
@@ -149,7 +155,9 @@ h1, h2, h3 { font-family: var(--font-head); margin: 0; line-height: 1.1; }
 .node.locked { background: #a99fb3; opacity: 0.85; }
 .node.open:hover { transform: translate(-50%, -55%) scale(1.1); }
 .node.next { background: var(--gold); animation: pulse 1.2s ease-in-out infinite; z-index: 2; }
-.node-stars { position: absolute; bottom: -12px; left: 50%; transform: translateX(-50%); white-space: nowrap; }
+.node-stars .stars { gap: 0; }
+.node-stars .star { width: clamp(10px, 1.25vw, 17px); height: auto; }
+.node-stars { position: absolute; bottom: -14px; left: 50%; transform: translateX(-50%); white-space: nowrap; }
 .chapter-flag { position: absolute; top: -14px; right: -10px; background: var(--pink); color: #fff; border-radius: 8px; font-size: 11px; padding: 0 5px; border: 2px solid var(--wood); }
 @keyframes pulse { 50% { box-shadow: 0 0 0 8px rgba(255, 209, 102, 0.35), 0 3px 0 rgba(0, 0, 0, 0.35); } }
 .map-footer { width: min(100%, 700px); }
@@ -237,10 +245,10 @@ h1, h2, h3 { font-family: var(--font-head); margin: 0; line-height: 1.1; }
   background: #fff; border: 3px solid #3a2a4a; border-radius: 10px; box-shadow: 0 5px 0 #3a2a4a;
 }
 .keycap.wide { font-size: 20px; }
-.big-stars .icon { animation: star-in 0.4s backwards; }
-.big-stars .icon:nth-child(1) { animation-delay: 0.4s; }
-.big-stars .icon:nth-child(2) { animation-delay: 0.85s; }
-.big-stars .icon:nth-child(3) { animation-delay: 1.3s; }
+.big-stars .star { animation: star-in 0.4s backwards; }
+.big-stars .star:nth-child(1) { animation-delay: 0.4s; }
+.big-stars .star:nth-child(2) { animation-delay: 0.85s; }
+.big-stars .star:nth-child(3) { animation-delay: 1.3s; }
 @keyframes star-in { from { transform: scale(0) rotate(-90deg); } }
 .meters { display: flex; flex-direction: column; gap: 6px; width: 100%; max-width: 360px; }
 .meter { display: flex; align-items: center; gap: 10px; }

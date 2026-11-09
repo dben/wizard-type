@@ -1,0 +1,22 @@
+{
+  "prompt": "Four versions of one cushy red armchair for a wizard's bedroom, in two rows of two, all the same size. Each is drawn at EYE LEVEL, as if the camera is level with the seat: a nearly straight-on front view with only a tiny hint of the top of the seat cushion and the top of the armrests visible, just like the bookshelf and wardrobe in the reference, NOT looking down from above. Plump red velvet with a button on the back cushion, dark wooden feet. IMPORTANT: no floor, no rug, no platform and no base tile; each chair stands alone on the magenta background. Version 1 is straight-on from the front. Version 2 is turned very slightly to the left. Version 3 is turned very slightly to the right. Version 4 is straight-on with a patterned cushion.",
+  "aspect": "1:1",
+  "reference": [
+    "furniture-a"
+  ],
+  "category": "furniture",
+  "scale": 4,
+  "merge": 1,
+  "cells": [
+    "armchair",
+    null,
+    null,
+    null
+  ],
+  "fit": {
+    "cells": [
+      0
+    ],
+    "height": 72
+  }
+}

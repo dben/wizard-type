@@ -9,8 +9,8 @@
   "merge": 1,
   "cells": [
     "coin",
-    "star",
-    "star-empty",
+    null,
+    null,
     "lock",
     "home",
     "bag",

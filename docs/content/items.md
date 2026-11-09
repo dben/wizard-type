@@ -61,7 +61,9 @@ Robes have no sprite. The wizard base sprite is recolored with `main`, and `trim
 | Category | Placed | Drawn |
 | --- | --- | --- |
 | `rug` | Floor | Under everything |
-| `window` | Fixed spot on the wall (`WINDOW_SPOT`) | Behind everything; one style shows at a time (`profile.window`) |
-| `wall` | Wall | Behind furniture |
-| `furniture` | Floor | Sorted by how low it stands |
+| `window` | Fixed spot on the back wall (`WINDOW_SPOT`) | Behind everything; one style shows at a time (`profile.window`) |
+| `wall` | Back wall only (`BACK_WALL`) | Behind furniture |
+| `furniture` | Floor only (`floorSpan()`) | Sorted by how low it stands |
 | `decor` | Anywhere | On top of furniture, so it can sit on tables |
+
+The pet and the wizard always draw in front of everything (`Z_PET`, `Z_WIZARD` in `src/render/scene.ts`). The room screen clamps every placement to where its category belongs, including saves from the old flat room.

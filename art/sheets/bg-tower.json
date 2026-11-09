@@ -1,16 +1,17 @@
 {
   "kind": "background",
   "style": true,
-  "prompt": "Inside of a cozy round stone wizard tower room, seen straight from the side like a stage. Stone brick back wall, warm wooden plank floor across the bottom third, a stone fireplace on the right side of the back wall. The room is EMPTY with no furniture, no window, no characters. Soft warm light. Full image, no border.",
+  "prompt": "Inside of a cozy octagonal stone wizard tower room, drawn in one-point perspective like a stage set seen from the front at eye level. A flat stone-brick BACK WALL faces the viewer, a wide rectangle centered in the picture and about half the picture's width. Two angled stone-brick SIDE WALLS slope outward from the back wall's left and right edges toward the left and right edges of the picture (the corners of an octagon, 135 degrees). Wooden ceiling beams across the top. A warm wooden plank FLOOR fills the bottom third as a trapezoid: narrow along the bottom of the back wall, widening to the full picture width at the bottom edge, with planks converging toward the back wall. The room is completely EMPTY and symmetrical: plain walls with no window, no fireplace, no furniture, no rug, no pictures, no characters. Soft warm light, subtle shading on the angled walls. Full image, no border.",
   "aspect": "16:9",
+  "imageSize": "2K",
   "reference": [
     "hats-a"
   ],
   "out": "backgrounds/tower.png",
   "size": [
-    480,
-    270
+    960,
+    540
   ],
-  "scale": 4,
-  "colors": 64
+  "scale": 2,
+  "colors": 96
 }

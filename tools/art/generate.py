@@ -11,6 +11,7 @@ Spec fields used here:
     prompt       What to draw. STYLE is prepended unless "style": false.
     aspect       Aspect ratio hint, e.g. "16:9", "1:1", "21:9".
     reference    Optional list of raw sheet ids passed as style reference images.
+    imageSize    Optional output size tier: "1K" (default), "2K" or "4K". Costs more.
 
 Auth: the OpenRouter key is injected by the environment's proxy. Set
 OPENROUTER_API_KEY when running elsewhere.
@@ -76,8 +77,13 @@ def call(spec: dict) -> bytes:
         "messages": [{"role": "user", "content": content}],
         "modalities": ["image", "text"],
     }
+    image_config = {}
     if spec.get("aspect"):
-        body["image_config"] = {"aspect_ratio": spec["aspect"]}
+        image_config["aspect_ratio"] = spec["aspect"]
+    if spec.get("imageSize"):
+        image_config["image_size"] = spec["imageSize"]
+    if image_config:
+        body["image_config"] = image_config
     key = os.environ.get("OPENROUTER_API_KEY", "sk-or-proxy-injected")
     req = urllib.request.Request(
         "https://openrouter.ai/api/v1/chat/completions",
