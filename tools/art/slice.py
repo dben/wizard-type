@@ -217,7 +217,9 @@ def slice_sheet(sheet_id: str, preview_only: bool) -> None:
                     continue
                 new = labels.max() + 1
                 labels[part] = new
-                ys, xs = np.nonzero(part)
+                ys, xs = np.nonzero(part & alpha)  # labels cover the merge margin too; box only real pixels
+                if not len(ys):
+                    continue
                 split.append((ys.min(), xs.min(), ys.max() + 1, xs.max() + 1, new))
         boxes = split
         cells_of = {}

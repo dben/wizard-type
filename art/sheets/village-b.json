@@ -1,0 +1,23 @@
+{
+  "prompt": "Three BROKEN versions of the wooden wagon from the reference image, side by side in one row with wide gaps. Same wagon, same wood colors, same size, same pixel style and exactly the same low side-on camera angle as the reference: do not turn the wagon and do not look down on it more. Each one has lost its front wheel: the front corner of the wagon box has dropped down and rests directly on the ground, so the wagon tilts forward a little, while the back wheels still stand on the ground. A plank or two is cracked. The lost wheel is on the ground at the RIGHT end of the wagon, close to it, with its bottom edge level with the bottom of the wagon's wheels; it is never lower than the wagon. Version 1: the lost wheel leans upright against the right end of the box. Version 2: the lost wheel lies flat as a thin oval at the right end. Version 3: the lost wheel is broken in two pieces at the right end. Only flat magenta under and around each wagon: no ground line, no floor, no grass, no shadow.",
+  "aspect": "16:9",
+  "reference": [
+    "ref-wagon"
+  ],
+  "category": "village",
+  "scale": 4,
+  "merge": 1,
+  "cells": [
+    "wagon-broken"
+  ],
+  "grid": [
+    2,
+    3
+  ],
+  "fit": {
+    "cells": [
+      0
+    ],
+    "width": 91
+  }
+}
