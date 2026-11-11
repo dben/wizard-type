@@ -62,8 +62,21 @@ What the slicer does: removes magenta and magenta-tinted fringe, shrinks by `sca
 | `cellScale` | `{"name": scale}` gives one object its own scale, fractions allowed (crown, beanie). |
 | `fillHoles` | Fill see-through pockets inside an object, like the inside of a hat brim. |
 | `cropBottom` | Cut this fraction off the bottom of every sprite (mushroom stems). |
+| `flip` | `[name, ...]` mirror these sprites. For characters the model drew facing the wrong way. |
+| `squash` | `{name: {"band": [y0, y1], "factor": 0.5}}` squash those rows to lower the camera angle (see below). |
 | `cutBottomOval` | `[wfrac, hfrac]` cut an outlined oval out of the bottom so a head shows through (mushroom caps use `[0.68, 0.16]`). |
 | `kind: "background"` + `out` + `size` | Full-image backgrounds instead of sprite sheets. `size` is the output in pixels; the raw image is `size × scale`. |
+
+### Lowering the camera angle
+
+The room and the outdoor scenes are seen almost side-on. A sprite drawn from too high up shows a deep top face and looks tilted, or seems to float above the ground line. `squash` (in `tools/art/squash.py`) fixes most of these without new art:
+
+- `band` is the rows of the top face, in sprite pixels. Only those rows shrink; legs and wheels below keep their shape.
+- `factor` is the band's new height (0.5 = half).
+- `riderTop` keeps everything above that row at full height and sets it back down on the surface (the desk's quill).
+- `riders: true` also lifts anything that is not wood-colored out of the band first (the potion bottles).
+
+Find the rows by opening the sprite zoomed in. If a squash looks muddy, redraw the object instead, as was done for the armchair and bed.
 
 ## Backgrounds
 
@@ -114,4 +127,6 @@ The key has a $10 monthly limit.
 - `furniture-c` holds the armchair redrawn from a lower camera angle (`ref-armchair` is its reference). The `furniture-a` armchair cell is skipped.
 - The broken plate is exported at half size (`cellScale`).
 - `furniture-d` holds the bed redrawn from the foot end at eye level (`ref-bed` is its reference). A side view was tried and looked out of perspective with the floor. The `furniture-a` bed cell is skipped.
+- The round table, writing desk, potion table, wagons and flower beds were drawn from a high angle and are flattened with `squash`.
+- The model drew most villagers facing right. All but the farmer (who faces front) are mirrored with `flip`.
 - Windows are sliced with `resize: 1.2` (about 2.5 raw pixels per sprite pixel). Their art pixels are about 3 raw pixels, so going bigger would start to show.

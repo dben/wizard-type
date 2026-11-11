@@ -16,5 +16,14 @@
     "shopkeeper",
     "fisher",
     "grandma"
+  ],
+  "flip": [
+    "baker",
+    "grandpa",
+    "kid",
+    "knight",
+    "shopkeeper",
+    "fisher",
+    "grandma"
   ]
 }

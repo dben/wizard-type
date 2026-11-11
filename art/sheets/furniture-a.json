@@ -17,5 +17,22 @@
     "telescope",
     "fern",
     "grandfather-clock"
-  ]
+  ],
+  "squash": {
+    "round-table": {
+      "band": [
+        0,
+        29
+      ],
+      "factor": 0.5
+    },
+    "desk": {
+      "band": [
+        19,
+        39
+      ],
+      "factor": 0.5,
+      "riderTop": 19
+    }
+  }
 }
