@@ -1,4 +1,5 @@
 import { useState } from 'preact/hooks';
+import { installApp, useCanInstall } from '../../app/install';
 import { deleteProfile, go, saveProfile, selectProfile, useGame } from '../../app/store';
 import { totalStars } from '../../game/progress';
 import { exportCode, importCode } from '../../game/save';
@@ -8,6 +9,7 @@ import { Button, Panel, Stars } from '../components/bits';
 export function ProfilesScreen() {
   const { save } = useGame();
   const [grownups, setGrownups] = useState(false);
+  const canInstall = useCanInstall();
   return (
     <main class="screen profiles">
       <h1 class="logo">Wizard Type</h1>
@@ -27,9 +29,16 @@ export function ProfilesScreen() {
           <b>New wizard</b>
         </button>
       </div>
-      <button class="link" onClick={() => setGrownups(!grownups)}>
-        Grown-ups
-      </button>
+      <div class="row center">
+        {canInstall && (
+          <Button onClick={() => void installApp()} title="Play from your desktop, in its own window">
+            Install app
+          </Button>
+        )}
+        <button class="link" onClick={() => setGrownups(!grownups)}>
+          Grown-ups
+        </button>
+      </div>
       {grownups && <GrownUps />}
     </main>
   );

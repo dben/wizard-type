@@ -27,3 +27,12 @@ Vite builds with `base: '/wizard-type/'` (`vite.config.ts`), and sprites load fr
 npm run build
 npm run preview   # http://localhost:4173/wizard-type/
 ```
+
+## Installable app
+
+`public/manifest.webmanifest` plus `public/icons/` (the favicon scaled up with nearest-neighbor) make the site installable as a desktop app in Chrome and Edge.
+
+- `src/app/install.ts` catches `beforeinstallprompt` and shows an **Install app** button on the wizard-pick screen. The button only appears when the browser offers an install, so it is hidden in Firefox, Safari and the installed app itself.
+- Safari on Mac can still install the game with **File → Add to Dock**.
+- There is no service worker, so the installed app needs a connection to load.
+- Manifest paths are relative, so they follow the `base` path.
