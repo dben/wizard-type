@@ -26,6 +26,8 @@ Sheet spec fields used here:
     cutBottomOval [wfrac, hfrac] cut an outlined oval out of the bottom (hat undersides)
     fillHoles true fills see-through pockets inside an object (hat brims)
     trim      false keeps the whole frame instead of cropping (for layered sprites)
+    flip      [name, ...] mirror these sprites (the model drew them facing the wrong way)
+    squash    {name: {...}} flatten a top face drawn from too high up (see squash.py)
 Background-only fields:
     out       output path under public/sprites, e.g. "backgrounds/tower.png"
     crop      [x, y, w, h] in source pixels before scaling
@@ -39,6 +41,8 @@ from pathlib import Path
 
 import numpy as np
 from PIL import Image, ImageDraw
+
+from squash import squash
 
 ROOT = Path(__file__).resolve().parents[2]
 SPRITES = ROOT / "public" / "sprites"
@@ -213,7 +217,9 @@ def slice_sheet(sheet_id: str, preview_only: bool) -> None:
                     continue
                 new = labels.max() + 1
                 labels[part] = new
-                ys, xs = np.nonzero(part)
+                ys, xs = np.nonzero(part & alpha)  # labels cover the merge margin too; box only real pixels
+                if not len(ys):
+                    continue
                 split.append((ys.min(), xs.min(), ys.max() + 1, xs.max() + 1, new))
         boxes = split
         cells_of = {}
@@ -293,6 +299,10 @@ def slice_sheet(sheet_id: str, preview_only: bool) -> None:
             im = im.crop(im.getbbox())
         if spec.get("cutBottomOval"):  # open up the underside so the head shows through
             im = cut_bottom_oval(im, *spec["cutBottomOval"])
+        if cells[k] in spec.get("flip", []):  # drawn facing the wrong way
+            im = im.transpose(Image.Transpose.FLIP_LEFT_RIGHT)
+        if cells[k] in spec.get("squash", {}):  # lower the camera angle
+            im = squash(im, **spec["squash"][cells[k]])
         im.save(outdir / f"{cells[k]}.png", optimize=True)
         print(f"  {k:2d} -> {spec['category']}/{cells[k]}.png {im.size}")
 

@@ -17,5 +17,16 @@
     "mushroom-stool",
     "globe",
     "bean-bag"
-  ]
+  ],
+  "squash": {
+    "alchemy-table": {
+      "band": [
+        17,
+        42
+      ],
+      "factor": 0.5,
+      "riders": true,
+      "riderTop": 17
+    }
+  }
 }

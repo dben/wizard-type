@@ -10,7 +10,7 @@
   "cells": [
     "well-broken",
     "well-fixed",
-    "wagon-broken",
+    null,
     "wagon-fixed",
     "flowers-bare",
     "flowers-bloom",
@@ -27,5 +27,28 @@
       7
     ]
   ],
-  "bgTolerance": 40
+  "bgTolerance": 40,
+  "squash": {
+    "wagon-fixed": {
+      "band": [
+        2,
+        26
+      ],
+      "factor": 0.5
+    },
+    "flowers-bare": {
+      "band": [
+        13,
+        40
+      ],
+      "factor": 0.45
+    },
+    "flowers-bloom": {
+      "band": [
+        20,
+        43
+      ],
+      "factor": 0.6
+    }
+  }
 }
