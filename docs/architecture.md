@@ -37,7 +37,7 @@ src/content  (data)  ──►  src/game  (pure rules)  ──►  src/ui + src/
 ## Scene layout
 
 - Logical size 480 × 200, drawn at 2× into the canvas and scaled with CSS (`image-rendering: pixelated`).
-- Indoor (tower): painted background, the chosen window, the kid's own room decorations, other lessons' mess greyed out, and this lesson's targets standing where its mess is in the room (`clutterFor()` in `content/world/room.ts`).
+- Indoor (tower): the room is 1032 × 256, wider than the view, so the camera pans to each target and stops at the side walls. The view shows the bottom 200 rows. Painted background, the chosen window, the kid's own room decorations, other lessons' mess greyed out, and this lesson's targets standing where its mess is in the room (`clutterFor()` in `content/world/room.ts`).
 - Outdoor: sky gradient, two procedural hill lines, hazy far props (parallax 0.55), ground strip, near props. Targets are spaced 240 px apart and the camera pans to the next one when a target is done, so the wizard appears to walk.
 - Spells are shared evenly across a lesson's targets. Battles have a single target with a heart meter.
 
@@ -56,6 +56,8 @@ All sprites are drawn 1:1 in scene pixels. Sizes were tuned by re-slicing at dif
 | Villagers | 90 tall |
 | Dragon | 160 × 150 |
 
+The two backgrounds are the exception: `tower.png` (2064 × 512) and `map.png` (1376 × 768) are stored at twice their logical size (room 1032 × 256, map 688 × 384) for finer detail. Positions stay in logical units.
+
 ## Testing
 
 - `src/game/*.test.ts`: typing, scoring, progress, saves.
@@ -66,8 +68,23 @@ All sprites are drawn 1:1 in scene pixels. Sizes were tuned by re-slicing at dif
 
 - `content/world/animations.ts` lists frames by naming convention: creature idle loops (`IDLE`, keyed by the still sprite) and pet motion (`petMotion()`: sitting sprite plus move frames, and whether the species walks, hops or flies).
 - The lesson scene swaps in the idle frame for any target that has one, and the pet sits while the wizard casts and moves along when the wizard walks.
-- In the room, `RoomPet` runs a small loop: sit for 3 to 8 seconds, pick a spot on the floor, travel there (flipped when going left), sit again. Tapping it makes it hop. Clutter creatures and the lesson intro picture use `useIdleFrame()`.
+- In the room, `RoomPet` runs a small loop: sit for 3 to 8 seconds, pick a spot on the floor near the wizard, travel there (flipped when going left), sit again. Tapping it makes it hop. Clutter creatures and the lesson intro picture use `useIdleFrame()`.
 - Frames of one animation can differ by a few pixels in size; everything is drawn from the bottom-center, so the feet stay put.
+
+## The room screen
+
+- `.room` is the viewport and `.room-world` inside it is the whole hall, moved with `translateX`. The camera centers on the wizard and stops at the walls.
+- One `requestAnimationFrame` loop reads the walk direction (keys, corner buttons, or a drag held at the edge) and moves the wizard. It only sets state while moving.
+- A dragged item's position is worked out from the pointer and the camera on every render, so it stays under the pointer while the view scrolls.
+- `ROOM_VERSION` in `content/world/room.ts` marks the layout. `save.ts` shifts placements from older saves by `ROOM_MOVE` once, so furniture keeps its place on the floor.
+
+## Wands in the hand
+
+`drawWand()` in `render/wizard.ts` measures each wand sprite once: the grip (middle of the solid pixels near the handle), the tip, and how far the art leans. Wands are turned so they all point the same way from the hand. Staffs (`staff: true`) stand upright with the foot at the wizard's feet and tip forward a little to cast.
+
+## Stars
+
+`Stars` in `ui/components/bits.tsx` draws SVG stars with a dark outline (gold when earned, grey when not), so they read at any size on any background. The `ui/star` sprites are no longer used.
 
 ## Keyboard and hands
 

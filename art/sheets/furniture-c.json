@@ -1,0 +1,20 @@
+{
+  "prompt": "Two versions of the red armchair from the reference image, side by side with a wide gap, same colors, same cushion, same size and same pixel style. Both are redrawn from a LOW camera at eye level, like furniture in a side-scrolling game: seen from the front, turned slightly to the right, standing upright. We look straight at the front of the chair, NOT down on it: the top of the seat cushion is only a thin strip and the tall backrest is straight and vertical. The first one has rounded arms, the second one has a wingback. No floor, no rug, no shadow under them.",
+  "aspect": "16:9",
+  "reference": [
+    "ref-armchair"
+  ],
+  "category": "furniture",
+  "scale": 4,
+  "merge": 1,
+  "cells": [
+    null,
+    "armchair"
+  ],
+  "fit": {
+    "cells": [
+      1
+    ],
+    "height": 70
+  }
+}

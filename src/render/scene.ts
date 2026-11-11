@@ -9,11 +9,11 @@ import type { LessonDef, TargetDef } from '../content/types';
 import { item } from '../content/items';
 import { LOCATIONS, type LocationDef } from '../content/world/locations';
 import type { Placement } from '../game/save';
-import { WINDOW_SPOT, clutterFor, type StoryClutter } from '../content/world/room';
+import { ROOM_H, ROOM_W, WINDOW_SPOT, clutterFor, type StoryClutter } from '../content/world/room';
 import { idleFrame, IDLE, petMotion } from '../content/world/animations';
 import { createRng } from '../game/rng';
 import { loadSprite, preload, sprite } from './sprites';
-import { WIZ, WIZ_CANVAS } from './wizard';
+import { WIZ, WIZ_CANVAS, drawWand, wandRest, wandTipAt } from './wizard';
 
 export const VIEW_W = 480;
 export const VIEW_H = 200;
@@ -22,7 +22,7 @@ const GROUND = 186;
 const WIZ_X = 92;
 const TARGET_GAP = 240;
 const FIRST_TARGET_X = 330;
-const ROOM_SHIFT = -70; // the tower background is 270 tall; show its bottom part
+const ROOM_SHIFT = VIEW_H - ROOM_H; // the room is taller than the view; show its bottom part
 
 interface TargetState {
   def: TargetDef;
@@ -52,6 +52,8 @@ export interface SceneSetup {
   spells: number;
   wizard: HTMLCanvasElement;
   wand: string;
+  /** The wand is a tall staff, held upright. */
+  staff?: boolean;
   pet: string | null;
   sparkle: string;
   room?: Placement[];
@@ -91,6 +93,7 @@ export class LessonScene {
     this.loc = LOCATIONS[setup.lesson.scene.location];
     this.layoutTargets();
     this.layoutProps();
+    this.camX = this.camGoal = this.camFor(this.targets[0]);
     this.npcX = this.targets[0].x + 90;
   }
 
@@ -107,13 +110,19 @@ export class LessonScene {
       if (spots[i]) {
         x = spots[i].x;
         y = spots[i].y + ROOM_SHIFT;
-      } else if (this.loc.indoor) x = n === 1 ? 340 : Math.round(230 + ((i + 0.5) * 210) / n);
+      } else if (this.loc.indoor) x = Math.round(ROOM_W / 2 + ((i + 0.5) * 210) / n);
       else x = FIRST_TARGET_X + i * TARGET_GAP;
       return {
         def, x, y, need: base + (i < extra ? 1 : 0),
         hits: 0, done: false, vanish: 0, shake: 0, hop: 0, leave: 0,
       };
     });
+  }
+
+  /** Camera position that puts a target in front of the wizard. The room stops at its side walls. */
+  private camFor(t: TargetState) {
+    const x = t.x - FIRST_TARGET_X;
+    return this.loc.indoor ? Math.max(0, Math.min(ROOM_W - VIEW_W, x)) : x;
   }
 
   private layoutProps() {
@@ -272,7 +281,7 @@ export class LessonScene {
     this.burst(sx, cy, 40, SPARKS, 110, -20, 2);
     if (t.def.helper) this.helpers.push({ sprite: t.def.helper, target: t, t: 0 });
     const next = this.targets.find((o) => !o.done);
-    if (next && !this.loc.indoor) setTimeout(() => (this.camGoal = next.x - FIRST_TARGET_X), 500);
+    if (next) setTimeout(() => (this.camGoal = this.camFor(next)), 500);
   }
 
   // ---------- drawing ----------
@@ -307,11 +316,12 @@ export class LessonScene {
   private drawRoom() {
     const c = this.ctx;
     const bg = sprite('backgrounds/tower');
-    if (bg) c.drawImage(bg, 0, ROOM_SHIFT);
-    else {
-      c.fillStyle = '#7a6a66';
-      c.fillRect(0, 0, VIEW_W, VIEW_H);
-    }
+    c.fillStyle = '#7a6a66';
+    c.fillRect(0, 0, VIEW_W, VIEW_H);
+    c.save();
+    c.translate(-Math.round(this.camX * K) / K, 0);
+    // The background has two pixels per room pixel, which is one per canvas pixel here.
+    if (bg) c.drawImage(bg, 0, ROOM_SHIFT, ROOM_W, ROOM_H);
     const windowIsTarget = this.targets.some((t) => t.def.sprite.startsWith('windows/'));
     if (this.setup.windowSprite && !windowIsTarget) this.drawSprite(this.setup.windowSprite, WINDOW_SPOT.x, WINDOW_SPOT.y + ROOM_SHIFT, {});
     const room = [...(this.setup.room ?? [])].sort((a, b) => layer(a) - layer(b) || a.y - b.y);
@@ -324,6 +334,7 @@ export class LessonScene {
     c.filter = 'grayscale(1) brightness(0.85)';
     c.globalAlpha = 0.55;
     for (const m of this.setup.clutter ?? []) this.drawSprite(m.sprite, m.x, m.y + ROOM_SHIFT, {});
+    c.restore();
     c.restore();
   }
 
@@ -449,27 +460,20 @@ export class LessonScene {
     c.drawImage(this.setup.wizard, left, top, WIZ_CANVAS.w, WIZ_CANVAS.h);
 
     const wand = sprite(this.setup.wand);
-    if (wand) {
-      c.save();
-      c.translate(left + WIZ.handX, top + WIZ.padTop + WIZ.handY);
-      c.rotate(this.wandAngle());
-      c.drawImage(wand, -Math.round(wand.width / 2), -wand.height + 6);
-      c.restore();
-    }
+    if (wand) drawWand(c, wand, left + WIZ.handX, top + WIZ.padTop + WIZ.handY, this.wandAngle(), !!this.setup.staff);
   }
 
   private wandAngle() {
-    return 0.45 + this.wandKick * 0.7 - this.wandDroop * 0.6 + Math.sin(this.time * 2) * 0.03;
+    // A staff rests upright and tips forward to cast; a wand flicks.
+    const staff = !!this.setup.staff;
+    return wandRest(staff) + this.wandKick * (staff ? 0.45 : 0.7) - this.wandDroop * (staff ? 0.25 : 0.6) + Math.sin(this.time * 2) * (staff ? 0.01 : 0.03);
   }
 
   /** Wand tip in screen coordinates. */
   private wandTip(): [number, number] {
-    const wand = sprite(this.setup.wand);
-    const len = (wand?.height ?? 40) - 6;
-    const a = this.wandAngle();
     const hx = WIZ_X - WIZ.headX + WIZ.handX;
     const hy = GROUND - WIZ.feetY + WIZ.handY;
-    return [hx + Math.sin(a) * len, hy - Math.cos(a) * len];
+    return wandTipAt(sprite(this.setup.wand), hx, hy, this.wandAngle(), !!this.setup.staff);
   }
 
   private drawBolts() {

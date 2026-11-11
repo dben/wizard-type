@@ -56,15 +56,16 @@ Replaying lesson 1 forever earns about 9 gold a run, so grinding is slow. The re
 - Fixing lessons (chapter 2) put the fixed furniture back in the room where the broken one stood.
 - Pets come from big moments: kitten (spider), owl (mouse), bunny (flowers), frog (bulldog), fox (goose), baby dragon (final dragon). The first pet is equipped automatically.
 - Pet outfits (scarf, wizard hat, flower crown) are sold once you have the pet.
-- Pets wander the room: they sit for a while, then walk (kitten, fox), hop (bunny, frog) or fly (owl, baby dragon) somewhere new. Tap a pet and it hops. In lessons the pet follows the wizard.
+- Pets wander the room near the wizard: they sit for a while, then walk (kitten, fox), hop (bunny, frog) or fly (owl, baby dragon) somewhere new, and hurry after the wizard when left behind. Tap a pet and it hops. In lessons the pet follows the wizard.
 
 ## The room
 
+- A long hall, about two screens wide, with a door at the left end and a fireplace at the right. The wizard walks with A and D (or the arrow keys, or the buttons in the corners) and the view follows. The wizard is always drawn in front.
 - Starts dusty: dust piles, dust bunnies, cobwebs, a grumpy spider, broken chair, table, bookshelf, a boarded-up window, a cauldron, and a mouse.
 - Each piece of clutter belongs to one lesson (`src/content/world/room.ts`) and disappears when that lesson is done. Tapping clutter says which lesson fixes it.
-- Tower lessons show the real room: the kid's furniture, the window, and every unfinished mess greyed out. The lesson's own mess is in full color, standing in the same spot, and is what the spells hit. The spider and mouse only appear in their own lessons.
+- Tower lessons show the real room: the kid's furniture, the window, and every unfinished mess greyed out. The lesson's own mess is in full color, standing in the same spot, and is what the spells hit. The view pans along the hall from one target to the next. The spider and mouse only appear in their own lessons.
 - The big window is part of the wall. Fixing it gives the Meadow Window; other styles (sunset, mountains, frosty, starry) come from the shop and are switched in the room's Window tab.
-- Kids place owned furniture, little things, wall hangings and rugs by tapping, then drag to move. Rugs draw under everything, little things draw on top of furniture, wall hangings always sit in front of the window.
+- Kids place owned furniture, little things, wall hangings and rugs by tapping, then drag to move. New things land in the middle of the view; dragging to the edge of the view walks that way. Rugs draw under everything, little things draw on top of furniture, wall hangings always sit in front of the window.
 
 ## Curriculum
 
@@ -109,7 +110,6 @@ Battles are never failable: spells fill the creature's heart meter until it chee
 
 ## Open ideas
 
-- The wizard walking around the room.
 - Daily "practice spell" bonus to reward short regular practice without big gold.
 - A reading-free intro (audio voice-over) for younger kids.
 - More chapters: punctuation like `:` `-` `( )`, longer paragraphs, timed challenges.

@@ -12,6 +12,7 @@ You are a little wizard with a very dusty tower. Every word you type is a magic 
 - 🐶 Cheer up grumpy animals. A bulldog, a goose, and even a dragon!
 - ⭐ Earn up to 3 stars on every lesson.
 - 🪙 Earn gold and buy hats, robes, wands, and things for your room.
+- 🏠 Walk around your room with **A** and **D** and put your things where you like.
 - 🐱 Finish big lessons to get a pet friend.
 
 ## How to play

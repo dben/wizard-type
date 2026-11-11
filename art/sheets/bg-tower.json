@@ -1,16 +1,17 @@
 {
   "kind": "background",
   "style": true,
-  "prompt": "Inside of a cozy round stone wizard tower room, seen straight from the side like a stage. Stone brick back wall, warm wooden plank floor across the bottom third, a stone fireplace on the right side of the back wall. The room is EMPTY with no furniture, no window, no characters. Soft warm light. Full image, no border.",
-  "aspect": "16:9",
+  "prompt": "A very wide panorama of the inside of a cozy stone wizard tower room for a side-scrolling game, drawn as detailed high-resolution pixel art with small fine pixels. Seen perfectly straight from the side like a theater stage: the back wall is completely FLAT and straight, parallel to the viewer, with no curve and no perspective. Grey stone brick back wall across the whole width. A warm wooden plank floor fills the whole bottom QUARTER of the image; the line where wall meets floor is one perfectly straight horizontal line across the whole image, with a wooden baseboard. Dark wooden ceiling beams along the top edge and a few wooden support posts spaced far apart. A stone fireplace with a small fire built into the wall near the right end, and a wooden arched door at the far left end. The rest of the wall is plain and EMPTY: no window, no furniture, no shelves, no pictures, no characters. Soft warm light, even lighting. Full image, no border.",
+  "aspect": "4:1",
   "reference": [
     "hats-a"
   ],
   "out": "backgrounds/tower.png",
   "size": [
-    480,
-    270
+    2064,
+    512
   ],
-  "scale": 4,
-  "colors": 64
+  "scale": 2,
+  "colors": 192,
+  "imageSize": "2K"
 }

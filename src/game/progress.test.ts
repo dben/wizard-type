@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { LESSONS } from '../content/curriculum';
 import { buy, equip, finishLesson, isOpen, nextLesson, roomClutter, shopState } from './progress';
-import { exportCode, importCode, loadSave, newProfile, writeSave } from './save';
+import { exportCode, importCode, loadSave, newProfile, writeSave, type Profile } from './save';
+import { FLOOR_TOP, ROOM_MOVE } from '../content/world/room';
 import { item } from '../content/items';
 
 const look = { hair: 'short' as const, hairColor: '#333', skin: '#f5c49c' };
@@ -67,6 +68,17 @@ describe('save', () => {
     const p = newProfile('Zoë', look);
     writeSave({ version: 1, profiles: [p], current: p.id }, storage);
     expect(loadSave(storage).profiles[0]).toEqual(p);
+  });
+
+  it('moves furniture from the old small room onto the new floor', () => {
+    const old = { ...newProfile('Zoë', look), room: [{ uid: 'a', item: 'furniture-chair', x: 165, y: 240 }] } as Partial<Profile>;
+    delete old.roomVersion;
+    const storage = { getItem: () => JSON.stringify({ version: 1, profiles: [old] }) };
+    const [p] = loadSave(storage).profiles;
+    expect(p.room[0]).toMatchObject({ x: 165 + ROOM_MOVE.dx, y: 240 + ROOM_MOVE.dy });
+    expect(p.room[0].y).toBeGreaterThan(FLOOR_TOP);
+    // Loading again must not move it twice.
+    expect(loadSave({ getItem: () => JSON.stringify({ version: 1, profiles: [p] }) }).profiles[0].room).toEqual(p.room);
   });
 
   it('survives garbage', () => {

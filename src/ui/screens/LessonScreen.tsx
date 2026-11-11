@@ -195,6 +195,7 @@ function SceneView({ info, profile, spells, onReady }: { info: LessonInfo; profi
         spells,
         wizard,
         wand: item(profile.equipped.wand)?.sprite ?? 'wands/twig',
+        staff: item(profile.equipped.wand)?.staff,
         pet: profile.equipped.pet ? (item(profile.equipped.pet)?.sprite ?? null) : null,
         sparkle: item(profile.equipped.robe)?.robe?.trim ?? '#ffd166',
         room: profile.room,

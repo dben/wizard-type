@@ -39,7 +39,7 @@ export function MapScreen() {
               <span class="num">{open ? i + 1 : <Icon name="lock" size={16} />}</span>
               {rec && rec.stars > 0 && (
                 <span class="node-stars">
-                  <Stars count={rec.stars} size={12} />
+                  <Stars count={rec.stars} size={15} />
                 </span>
               )}
             </button>

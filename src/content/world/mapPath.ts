@@ -1,16 +1,20 @@
 /**
- * The trail on the world map (backgrounds/map.png, 688 x 384), from the tower
- * through the village, the farm fields, over the bridge, through the forest
- * and up to the dragon's cave. Lessons are spaced evenly along it.
+ * The trail on the world map, from the tower through the village, past the
+ * farm and the windmill, over the bridge, through the forest and up the steps
+ * to the dragon's cave. Lessons are spaced evenly along it.
+ *
+ * Points are in map units (688 x 384). backgrounds/map.png is drawn at twice
+ * that, so re-plot the trail whenever the map is regenerated.
  */
 export const MAP_W = 688;
 export const MAP_H = 384;
 
 export const MAP_TRAIL: [number, number][] = [
-  [110, 340], [160, 352], [210, 342], [250, 322], [282, 296], [262, 262], [222, 252], [188, 236],
-  [160, 205], [128, 172], [100, 140], [118, 104], [165, 100], [212, 126], [258, 160], [312, 196],
-  [366, 210], [412, 202], [454, 196], [496, 214], [534, 236], [566, 214], [552, 178], [528, 146],
-  [538, 112], [560, 88], [578, 66],
+  [92, 326], [120, 310], [150, 297], [190, 298], [235, 300], [278, 297], [268, 264], [255, 240],
+  [225, 228], [195, 228], [172, 245], [150, 212], [135, 185], [126, 160], [148, 146], [178, 131],
+  [215, 122], [258, 125], [285, 150], [305, 178], [328, 200], [352, 194], [385, 185], [410, 175],
+  [440, 170], [465, 182], [490, 205], [520, 220], [552, 222], [572, 205], [576, 180], [584, 160],
+  [586, 130], [596, 112], [612, 98],
 ];
 
 /** n points spaced evenly along the trail. */

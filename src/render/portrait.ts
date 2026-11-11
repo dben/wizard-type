@@ -1,7 +1,7 @@
 import { item } from '../content/items';
 import type { Equipped, WizardLook } from '../game/save';
 import { loadSprite } from './sprites';
-import { buildWizard, WIZ, WIZ_CANVAS } from './wizard';
+import { buildWizard, drawWand, wandRest, WIZ, WIZ_CANVAS } from './wizard';
 
 const cache = new Map<string, Promise<string>>();
 const DEFAULT_ROBE = { main: '#5b8fd6', trim: '#f2d36b' };
@@ -20,14 +20,10 @@ export function portraitUrl(look: WizardLook, eq: Pick<Equipped, 'hat' | 'robe' 
       const ctx = c.getContext('2d')!;
       ctx.imageSmoothingEnabled = false;
       ctx.drawImage(body, 0, 0);
-      const wandPath = item(eq.wand)?.sprite;
-      if (wandPath) {
-        const wand = await loadSprite(wandPath);
-        ctx.save();
-        ctx.translate(WIZ.handX, WIZ.padTop + WIZ.handY);
-        ctx.rotate(0.45);
-        ctx.drawImage(wand, -Math.round(wand.width / 2), -wand.height + 6);
-        ctx.restore();
+      const wand = item(eq.wand);
+      if (wand?.sprite) {
+        const staff = !!wand.staff;
+        drawWand(ctx, await loadSprite(wand.sprite), WIZ.handX, WIZ.padTop + WIZ.handY, wandRest(staff), staff);
       }
       return c.toDataURL();
     })();
