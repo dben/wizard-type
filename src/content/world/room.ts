@@ -8,7 +8,7 @@ export const ROOM_H = 256;
 /** Where the wooden floor starts. Furniture stands below this line. */
 export const FLOOR_TOP = 186;
 /** The big window is part of the wall: always here, only its style changes. */
-export const WINDOW_SPOT = { x: 372, y: 146 };
+export const WINDOW_SPOT = { x: 372, y: 152 };
 
 /**
  * Bump when the room's size changes. Saves from an older layout are shifted by

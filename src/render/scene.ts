@@ -426,7 +426,7 @@ export class LessonScene {
 
     // Progress pips (hearts in battles) above unfinished targets.
     if (!t.done && t.need > 1 && t === this.targets[this.current]) {
-      const top = y - this.targetHeight(t) - 10;
+      const top = Math.max(4, y - this.targetHeight(t) - 10); // tall targets (the window) reach past the top of the view
       const w = t.need * 8;
       for (let i = 0; i < t.need; i++) {
         const px = Math.round(x - w / 2 + i * 8);

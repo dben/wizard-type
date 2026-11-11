@@ -49,7 +49,7 @@ All sprites are drawn 1:1 in scene pixels. Sizes were tuned by re-slicing at dif
 | --- | --- |
 | Wizard (frame) | 96 × 96 (the kid is 84 tall), plus 40 px above for hats |
 | Hats | about 50 wide |
-| Big window | about 160 × 100 |
+| Big window | about 195 × 120 |
 | Pets | 40 tall |
 | Furniture | 40 to 80 tall |
 | Little decor | 25 to 35 |
