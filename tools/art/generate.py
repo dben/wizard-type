@@ -9,7 +9,8 @@ Writes  art/raw/<sheet-id>.webp   (lossless; the source of truth for slicing)
 Spec fields used here:
     model        OpenRouter model id (default: DEFAULT_MODEL)
     prompt       What to draw. STYLE is prepended unless "style": false.
-    aspect       Aspect ratio hint, e.g. "16:9", "1:1", "21:9".
+    aspect       Aspect ratio hint, e.g. "16:9", "1:1", "4:1".
+    imageSize    Optional output size, "1K" (default), "2K" or "4K". Bigger costs more.
     reference    Optional list of raw sheet ids passed as style reference images.
 
 Auth: the OpenRouter key is injected by the environment's proxy. Set
@@ -78,6 +79,8 @@ def call(spec: dict) -> bytes:
     }
     if spec.get("aspect"):
         body["image_config"] = {"aspect_ratio": spec["aspect"]}
+    if spec.get("imageSize"):
+        body.setdefault("image_config", {})["image_size"] = spec["imageSize"]
     key = os.environ.get("OPENROUTER_API_KEY", "sk-or-proxy-injected")
     req = urllib.request.Request(
         "https://openrouter.ai/api/v1/chat/completions",

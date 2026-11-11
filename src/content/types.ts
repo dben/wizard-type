@@ -103,4 +103,6 @@ export interface ItemDef {
   robe?: RobeStyle;
   /** Hats: nudge the hat down (positive) or up so it sits on the head. */
   hatOffset?: number;
+  /** Wands: a tall staff, held upright like a walking stick with its foot on the ground. */
+  staff?: boolean;
 }

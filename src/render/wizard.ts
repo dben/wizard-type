@@ -2,7 +2,8 @@
  * Builds the wizard picture from layers:
  *   base sprite (one per hair style, drawn with green hair, peach skin, grey robe)
  *   -> recolor skin, hair and robe -> robe pattern and hem -> hat.
- * The wand and pet are drawn separately so scenes can animate them.
+ * The wand and pet are drawn separately so scenes can animate them; drawWand()
+ * puts a wand or staff in the hand.
  */
 import type { ItemDef, RobeStyle } from '../content/types';
 import type { WizardLook } from '../game/save';
@@ -23,6 +24,70 @@ export const WIZ = {
 } as const;
 
 export const WIZ_CANVAS = { w: WIZ.size, h: WIZ.size + WIZ.padTop };
+
+/** Where the hand holds a wand sprite, measured from its pixels. */
+interface WandGrip {
+  /** Grip point in sprite pixels. */
+  x: number;
+  y: number;
+  /** Top of the wand, where sparkles come out. */
+  tipX: number;
+  /** How far the art itself leans to the right, in radians (a feather is drawn slanted). */
+  lean: number;
+}
+
+const grips = new WeakMap<HTMLImageElement, WandGrip>();
+
+function wandGrip(img: HTMLImageElement, staff: boolean): WandGrip {
+  let g = grips.get(img);
+  if (g) return g;
+  const c = document.createElement('canvas').getContext('2d')!;
+  c.canvas.width = img.width;
+  c.canvas.height = img.height;
+  c.drawImage(img, 0, 0);
+  const a = c.getImageData(0, 0, img.width, img.height).data;
+  /** Middle of the solid pixels in a band of rows. */
+  const middle = (y0: number, y1: number) => {
+    let lo = img.width;
+    let hi = -1;
+    for (let y = Math.max(0, y0); y <= Math.min(img.height - 1, y1); y++)
+      for (let x = 0; x < img.width; x++)
+        if (a[(y * img.width + x) * 4 + 3] > 0) {
+          lo = Math.min(lo, x);
+          hi = Math.max(hi, x + 1);
+        }
+    return hi < 0 ? img.width / 2 : (lo + hi) / 2;
+  };
+  // Wands are held near the bottom. Staffs are held where the hand is when the foot rests on the ground.
+  const y = img.height - (staff ? WIZ.feetY - WIZ.handY : 6);
+  const x = middle(y - 2, y + 2);
+  const tipX = middle(0, 5);
+  g = { x, y, tipX, lean: staff ? 0 : Math.atan2(tipX - x, y) };
+  grips.set(img, g);
+  return g;
+}
+
+/** Resting angle: wands point up and forward, staffs stand upright like a walking stick. */
+export const wandRest = (staff: boolean) => (staff ? 0.04 : 0.45);
+
+/** Draw a wand held in the hand at (handX, handY), turned by `angle` (0 = straight up). */
+export function drawWand(ctx: CanvasRenderingContext2D, img: HTMLImageElement, handX: number, handY: number, angle: number, staff: boolean) {
+  const g = wandGrip(img, staff);
+  ctx.save();
+  ctx.translate(handX, handY);
+  ctx.rotate(angle - g.lean);
+  ctx.drawImage(img, -Math.round(g.x), -Math.round(g.y));
+  ctx.restore();
+}
+
+/** Where the tip of that wand ends up. */
+export function wandTipAt(img: HTMLImageElement | undefined, handX: number, handY: number, angle: number, staff: boolean): [number, number] {
+  if (!img) return [handX + 12, handY - 30];
+  const g = wandGrip(img, staff);
+  const a = angle - g.lean;
+  const dx = g.tipX - g.x;
+  return [handX + dx * Math.cos(a) + g.y * Math.sin(a), handY + dx * Math.sin(a) - g.y * Math.cos(a)];
+}
 
 /** Most common color of each role in the base art; shading is measured against these. */
 type Role = 'skin' | 'hair' | 'robe' | null;

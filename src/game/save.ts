@@ -3,6 +3,7 @@
  * Profiles can be copied to another device with a save code (export/import).
  */
 import { STARTER_ITEMS, item } from '../content/items';
+import { ROOM_H, ROOM_MOVE, ROOM_VERSION, ROOM_W } from '../content/world/room';
 
 export type HairStyle = 'short' | 'long' | 'pigtails' | 'curly' | 'bun' | 'spiky' | 'braid';
 
@@ -44,6 +45,8 @@ export interface Profile {
   owned: string[];
   equipped: Equipped;
   room: Placement[];
+  /** Which room layout the placements were made in (content/world/room.ts). */
+  roomVersion: number;
   /** Style of the big tower window (shows once the window is fixed). */
   window: string;
   settings: { hands: boolean; sound: boolean };
@@ -71,14 +74,23 @@ export function newProfile(name: string, look: WizardLook, id: string = crypto.r
     owned: [...STARTER_ITEMS],
     equipped: { hat: 'hat-plain-navy', robe: 'robe-sky', wand: 'wand-twig', pet: null },
     room: [],
+    roomVersion: ROOM_VERSION,
     window: 'wall-window',
     settings: { hands: true, sound: true },
   };
 }
 
+/** The room got wider: slide things from the old, smaller room to the same spot on the new floor. */
+const moveToNewRoom = (r: Placement): Placement => ({
+  ...r,
+  x: Math.max(0, Math.min(ROOM_W, r.x + ROOM_MOVE.dx)),
+  y: Math.max(0, Math.min(ROOM_H, r.y + ROOM_MOVE.dy)),
+});
+
 /** Fill in fields that older saves may be missing. */
 function normalize(p: Profile): Profile {
   const base = newProfile(p.name, p.look, p.id);
+  const moved = (p.roomVersion ?? 1) < ROOM_VERSION;
   return {
     ...base,
     ...p,
@@ -86,7 +98,8 @@ function normalize(p: Profile): Profile {
     settings: { ...base.settings, ...p.settings },
     owned: [...new Set([...STARTER_ITEMS, ...(p.owned ?? [])])],
     // The window used to be a placeable wall item; it's part of the wall now.
-    room: (p.room ?? []).filter((r) => item(r.item) && item(r.item)!.category !== 'window'),
+    room: (p.room ?? []).filter((r) => item(r.item) && item(r.item)!.category !== 'window').map((r) => (moved ? moveToNewRoom(r) : r)),
+    roomVersion: ROOM_VERSION,
   };
 }
 

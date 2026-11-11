@@ -46,7 +46,8 @@ What the slicer does: removes magenta and magenta-tinted fringe, shrinks by `sca
 | Field | Meaning |
 | --- | --- |
 | `prompt` | What to draw. A shared style line is added unless `"style": false`. |
-| `aspect` | `16:9`, `1:1`, `3:4`… |
+| `aspect` | `16:9`, `1:1`, `3:4`, `4:1`… |
+| `imageSize` | `2K` or `4K` for a bigger raw image (about $0.10 at 2K). Used by the backgrounds. |
 | `reference` | Raw sheet ids passed as style reference images. |
 | `category` | Output folder under `public/sprites/`. |
 | `scale` | Source pixels per output pixel. Bigger = smaller sprites. |
@@ -62,7 +63,13 @@ What the slicer does: removes magenta and magenta-tinted fringe, shrinks by `sca
 | `fillHoles` | Fill see-through pockets inside an object, like the inside of a hat brim. |
 | `cropBottom` | Cut this fraction off the bottom of every sprite (mushroom stems). |
 | `cutBottomOval` | `[wfrac, hfrac]` cut an outlined oval out of the bottom so a head shows through (mushroom caps use `[0.68, 0.16]`). |
-| `kind: "background"` + `out` + `size` | Full-image backgrounds instead of sprite sheets. |
+| `kind: "background"` + `out` + `size` | Full-image backgrounds instead of sprite sheets. `size` is the output in pixels; the raw image is `size × scale`. |
+
+## Backgrounds
+
+- `bg-tower` (the room) is a 4:1 panorama at 2K (4128 × 1024). Its art pixels are about 4 raw pixels, the same density as the sprites, and it is exported at half size (2064 × 512), two pixels per room pixel. The first try had a shallow floor; the kept one is an edit of it asking for a floor that fills the bottom quarter. If you regenerate it, check `FLOOR_TOP`, the posts, door and fireplace against `content/world/room.ts`.
+- `bg-map` is 16:9 at 2K, exported at 1376 × 768. After regenerating it, re-plot `MAP_TRAIL` in `content/world/mapPath.ts` (map units are half the image size).
+- Backgrounds keep 192 to 256 colors. With fewer, small color areas (the purple tower roof) turned grey.
 
 ## Animations
 
@@ -92,6 +99,8 @@ The key has a $10 monthly limit.
 
 | Date | Spent | What |
 | --- | --- | --- |
+| 2026-11-11 | ~$0.20 | Bed redrawn from a lower angle (3 tries). |
+| 2026-11-10 | ~$0.37 | High-res map, wide room (2 tries), armchair redrawn from a lower angle. |
 | 2026-11-08 | ~$1.05 | Animations: 9 creature idle sheets, 6 pet sit/move sheets (owl and dragon redone as flying). |
 | 2026-11-08 | ~$1.14 | Second pass: 5 candidate wizard bases (try 3 kept) + 6 new hair edits, wide windows (2 tries), plants, knick-knacks, decor color variants, stemless mushroom hats. |
 | 2026-11-08 | ~$2.32 | Initial set: 29 sheets (hats, wands, 3 pet sheets, 2 furniture, 2 decor, rugs, fixtures, clutter, 2 creature sheets, dragon, village, villagers, 2 prop sheets, UI icons, tower and map backgrounds, wizard base + 6 hair styles). furniture-a was generated twice. Includes model tests. |
@@ -102,4 +111,7 @@ The key has a $10 monthly limit.
 - The first window sheet also had stained-glass and flower-box styles, but it was regenerated wider and those are gone. Generate a `windows-b` sheet to add more styles.
 - The hats sheet's mushroom (with stem) is skipped; mushroom hats come from `hats-b`.
 - The mushroom lamp in `decor-a` kept a pink halo and is not exported.
-- The dragon on the map background is green; the battle dragon is red.
+- `furniture-c` holds the armchair redrawn from a lower camera angle (`ref-armchair` is its reference). The `furniture-a` armchair cell is skipped.
+- The broken plate is exported at half size (`cellScale`).
+- `furniture-d` holds the bed redrawn from the foot end at eye level (`ref-bed` is its reference). A side view was tried and looked out of perspective with the floor. The `furniture-a` bed cell is skipped.
+- Windows are sliced with `resize: 1.2` (about 2.5 raw pixels per sprite pixel). Their art pixels are about 3 raw pixels, so going bigger would start to show.

@@ -7,7 +7,7 @@
 | `src/content/items/wardrobe.ts` | Hats, robes, wands, pets and pet outfits. |
 | `src/content/items/room.ts` | Furniture, little decor, wall hangings, rugs. |
 | `src/content/items/index.ts` | Joins the catalogs; `item(id)` lookup. |
-| `src/content/world/room.ts` | Starting clutter (also the tower lessons' target spots), the window spot, and where fixed furniture goes. |
+| `src/content/world/room.ts` | Room size, starting clutter (also the tower lessons' target spots), the window spot, and where fixed furniture goes. |
 
 ## Item format
 
@@ -21,6 +21,7 @@
   unlock: 'fix-window',    // lesson that puts it in the shop
   requires: 'pet-kitten',  // optional: must own this first
   hatOffset: 4,            // hats only: push down onto the head (negative lifts)
+  staff: true,             // wands only: tall staff, held upright with its foot on the ground
   robe: { main: '#5e9c55', trim: '#e8c86a', pattern: 'stars' }, // robes only
 }
 ```
@@ -55,6 +56,11 @@ Price grows with the unlock lesson, so later items feel special. A lesson's firs
 ## Robes
 
 Robes have no sprite. The wizard base sprite is recolored with `main`, and `trim` is used for the hem and the pattern (`stars`, `moons`, `dots`, `stripes`, `hearts`, `leaves`). New patterns go in `patternAt()` in `src/render/wizard.ts`, plus the `RobeStyle` type.
+
+## Wands and staffs
+
+- Draw them standing upright, handle at the bottom. The game finds the grip from the pixels (the handle for wands, hand height for staffs), so slanted art like the feather still sits in the hand.
+- `wand()` marks ids ending in `-staff` as staffs. Staffs are about 85 px tall so the top clears the wizard's head.
 
 ## Room categories
 

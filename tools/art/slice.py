@@ -256,6 +256,7 @@ def slice_sheet(sheet_id: str, preview_only: bool) -> None:
     for k, (y0, x0, y1, x1, _) in enumerate(boxes):
         draw.rectangle([x0 * 3, y0 * 3, x1 * 3, y1 * 3], outline=(0, 255, 255, 255))
         draw.text((x0 * 3 + 2, y0 * 3 + 1), str(k), fill=(255, 255, 0, 255))
+    (ROOT / "art" / "preview").mkdir(exist_ok=True)
     prev.save(ROOT / "art" / "preview" / f"{sheet_id}.png")
     print(f"{sheet_id}: {len(boxes)} objects (preview in art/preview/{sheet_id}.png)")
     if preview_only:

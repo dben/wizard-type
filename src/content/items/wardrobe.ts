@@ -62,7 +62,7 @@ export const ROBES: ItemDef[] = [
 ];
 
 const wand = (id: string, name: string, price: number, unlock?: string): ItemDef => ({
-  id: `wand-${id}`, name, category: 'wand', sprite: `wands/${id}`, price, unlock,
+  id: `wand-${id}`, name, category: 'wand', sprite: `wands/${id}`, price, unlock, staff: id.endsWith('-staff') || undefined,
 });
 
 export const WANDS: ItemDef[] = [

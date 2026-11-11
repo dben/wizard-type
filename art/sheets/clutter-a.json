@@ -20,5 +20,8 @@
     "dustpan",
     "plate-broken",
     "paper-pile"
-  ]
+  ],
+  "cellScale": {
+    "plate-broken": 8
+  }
 }

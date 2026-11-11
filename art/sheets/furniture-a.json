@@ -8,10 +8,10 @@
   "scale": 4,
   "merge": 1,
   "cells": [
-    "bed",
+    null,
     "desk",
     "bookshelf",
-    "armchair",
+    null,
     "round-table",
     "wardrobe",
     "telescope",

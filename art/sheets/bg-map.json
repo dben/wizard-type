@@ -1,16 +1,17 @@
 {
   "kind": "background",
   "style": true,
-  "prompt": "A cozy top-down fantasy world map for a children's game: a wizard tower on the bottom left, a winding dirt path leading through a small village with cottages, past farm fields and flowers, over a river with a stone bridge, through a forest, up to a tall mountain with a little dragon cave at the top right. Soft green grass, blue river. No text, no labels.",
+  "prompt": "A cozy top-down fantasy world map for a children's game, drawn as detailed high-resolution pixel art with small fine pixels and lots of little details. A purple wizard tower on a small hill at the bottom left. One winding dirt path starts at the tower, leads through a small village with cottages and a well, past farm fields with hay and flowers and a windmill, over a blue river on a stone bridge in the middle, through a pine forest, and climbs up a tall rocky mountain to a little dragon cave at the top right, with a small friendly red dragon peeking out. The path is one clear continuous trail with no branches. Soft green grass, a few clouds along the top edge. No text, no labels, no border.",
   "aspect": "16:9",
   "reference": [
     "hats-a"
   ],
   "out": "backgrounds/map.png",
   "size": [
-    688,
-    384
+    1376,
+    768
   ],
-  "scale": 4,
-  "colors": 64
+  "scale": 2,
+  "colors": 256,
+  "imageSize": "2K"
 }

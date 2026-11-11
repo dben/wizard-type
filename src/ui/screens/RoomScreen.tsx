@@ -1,6 +1,10 @@
 /**
  * The wizard's room. Tap something in the tray to place it, drag to move,
  * and use the little toolbar to flip it or put it away.
+ *
+ * The room is wider than the screen. The wizard walks left and right (A / D,
+ * the arrow keys, or the buttons in the corners) and the view follows.
+ * Dragging something to the edge of the view walks that way too.
  */
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { sfx } from '../../audio/sfx';
@@ -8,7 +12,7 @@ import { currentProfile, go, update } from '../../app/store';
 import { lessonInfo } from '../../content/curriculum';
 import { item } from '../../content/items';
 import type { ItemCategory, ItemDef } from '../../content/types';
-import { FLOOR_TOP, PET_SPOT, ROOM_H, ROOM_W, WINDOW_SPOT, WIZARD_SPOT, type StoryClutter } from '../../content/world/room';
+import { FLOOR_TOP, PET_SPOT, ROOM_H, ROOM_W, WALK_MARGIN, WINDOW_SPOT, WIZARD_SPOT, type StoryClutter } from '../../content/world/room';
 import { chooseWindow, isDone, roomClutter, windowSprite } from '../../game/progress';
 import type { Placement } from '../../game/save';
 import { layer } from '../../render/scene';
@@ -37,7 +41,12 @@ const FlipIcon = () => (
   </svg>
 );
 
-const DEFAULT_Y: Record<string, number> = { rug: 252, furniture: 246, wall: 130, decor: 200 };
+const DEFAULT_Y: Record<string, number> = { rug: 232, furniture: 222, wall: 110, decor: 180 };
+/** Room pixels per second. */
+const WALK_SPEED = 130;
+/** Dragging this close (screen pixels) to the edge of the view walks that way. */
+const EDGE = 36;
+const WALK_KEYS: Record<string, number> = { a: -1, arrowleft: -1, d: 1, arrowright: 1 };
 
 function clamp(it: ItemDef, x: number, y: number): [number, number] {
   const img = it.sprite ? sprite(it.sprite) : undefined;
@@ -54,13 +63,23 @@ export function RoomScreen() {
   const p = currentProfile()!;
   const [tab, setTab] = useState<ItemCategory>('furniture');
   const [selected, setSelected] = useState<string | null>(null);
-  const [drag, setDrag] = useState<{ uid: string; x: number; y: number } | null>(null);
+  /** Where the pointer is while dragging; the item's spot is worked out from it, so it keeps up when the view scrolls. */
+  const [drag, setDrag] = useState<{ uid: string; px: number; py: number } | null>(null);
   const [scale, setScale] = useState(2);
+  /** Width of the visible part of the room, in room pixels. */
+  const [view, setView] = useState(480);
+  const [walk, setWalk] = useState({ x: WIZARD_SPOT.x, dir: 1, t: 0, moving: false });
   const [ready, setReady] = useState(false);
   const [hint, setHint] = useState<{ x: number; y: number; text: string } | null>(null);
   const [wizUrl, setWizUrl] = useState<string>();
   const box = useRef<HTMLDivElement>(null);
-  const dragStart = useRef<{ px: number; py: number; x: number; y: number } | null>(null);
+  const viewport = useRef<HTMLDivElement>(null);
+  const dragStart = useRef<{ px: number; py: number; x: number; y: number; cam: number } | null>(null);
+  const keys = useRef(new Set<string>());
+  /** Walk direction from the on-screen buttons, and from dragging to an edge. */
+  const held = useRef(0);
+  const edge = useRef(0);
+  const wizX = useRef(WIZARD_SPOT.x);
 
   const owned = p.owned.map(item).filter((i): i is ItemDef => !!i && ['furniture', 'decor', 'wall', 'rug', 'window'].includes(i.category));
   const clutter = roomClutter(p);
@@ -80,14 +99,65 @@ export function RoomScreen() {
   useEffect(() => {
     const el = box.current;
     if (!el) return;
-    const ro = new ResizeObserver(() => {
-      const w = el.clientWidth;
-      const h = window.innerHeight - 330;
-      setScale(Math.max(1, Math.min(w / ROOM_W, Math.max(1, h / ROOM_H), 3)));
-    });
+    const fit = () => {
+      const s = Math.max(1, Math.min((window.innerHeight - 330) / ROOM_H, 3));
+      setScale(s);
+      setView(Math.min(ROOM_W, (el.clientWidth - 10) / s));
+    };
+    const ro = new ResizeObserver(fit);
     ro.observe(el);
-    return () => ro.disconnect();
+    window.addEventListener('resize', fit);
+    return () => (ro.disconnect(), window.removeEventListener('resize', fit));
   }, []);
+
+  // Walking: keys and buttons set a direction, one loop moves the wizard.
+  useEffect(() => {
+    const typing = (e: KeyboardEvent) => e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement;
+    const down = (e: KeyboardEvent) => {
+      const k = e.key.toLowerCase();
+      if (!(k in WALK_KEYS) || typing(e) || e.ctrlKey || e.metaKey || e.altKey) return;
+      e.preventDefault();
+      keys.current.add(k);
+    };
+    const up = (e: KeyboardEvent) => keys.current.delete(e.key.toLowerCase());
+    const clear = () => (keys.current.clear(), (held.current = 0));
+    window.addEventListener('keydown', down);
+    window.addEventListener('keyup', up);
+    window.addEventListener('blur', clear);
+
+    let raf = 0;
+    let last = 0;
+    let moving = false;
+    const tick = (now: number) => {
+      const dt = last ? Math.min(0.05, (now - last) / 1000) : 0;
+      last = now;
+      let dir = 0;
+      for (const k of keys.current) dir += WALK_KEYS[k];
+      dir = Math.sign(dir) || held.current || edge.current;
+      if (dir) {
+        moving = true;
+        setWalk((w) => {
+          const x = Math.max(WALK_MARGIN, Math.min(ROOM_W - WALK_MARGIN, w.x + dir * WALK_SPEED * dt));
+          wizX.current = x;
+          return { x, dir, t: w.t + dt, moving: true };
+        });
+      } else if (moving) {
+        moving = false;
+        setWalk((w) => ({ ...w, moving: false }));
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('keydown', down);
+      window.removeEventListener('keyup', up);
+      window.removeEventListener('blur', clear);
+    };
+  }, []);
+
+  /** Left edge of the view: follows the wizard, stops at the walls. */
+  const cam = Math.max(0, Math.min(ROOM_W - view, walk.x - view / 2));
 
   const save = (room: Placement[]) => update((x) => ({ ...x, room }));
 
@@ -98,7 +168,7 @@ export function RoomScreen() {
     }
     const existing = p.room.find((r) => r.item === it.id);
     if (existing) return setSelected(existing.uid);
-    const [x, y] = clamp(it, ROOM_W / 2, DEFAULT_Y[it.category] ?? 220);
+    const [x, y] = clamp(it, cam + view / 2, DEFAULT_Y[it.category] ?? 220);
     const uid = `${it.id}-${Date.now()}`;
     sfx.click();
     save([...p.room, { uid, item: it.id, x, y }]);
@@ -110,24 +180,40 @@ export function RoomScreen() {
     e.stopPropagation();
     setSelected(pl.uid);
     setHint(null);
-    dragStart.current = { px: e.clientX, py: e.clientY, x: pl.x, y: pl.y };
-    setDrag({ uid: pl.uid, x: pl.x, y: pl.y });
+    dragStart.current = { px: e.clientX, py: e.clientY, x: pl.x, y: pl.y, cam };
+    setDrag({ uid: pl.uid, px: e.clientX, py: e.clientY });
     (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
   };
   const onPointerMove = (e: PointerEvent, pl: Placement) => {
+    if (!dragStart.current || drag?.uid !== pl.uid) return;
+    setDrag({ uid: pl.uid, px: e.clientX, py: e.clientY });
+    const r = viewport.current!.getBoundingClientRect();
+    edge.current = e.clientX < r.left + EDGE ? -1 : e.clientX > r.right - EDGE ? 1 : 0;
+  };
+  /** Where a placement is right now: under the pointer while it's being dragged. */
+  const pos = (pl: Placement): { x: number; y: number } => {
     const st = dragStart.current;
-    if (!st || drag?.uid !== pl.uid) return;
-    const [x, y] = clamp(item(pl.item)!, st.x + (e.clientX - st.px) / scale, st.y + (e.clientY - st.py) / scale);
-    setDrag({ uid: pl.uid, x, y });
+    if (!st || drag?.uid !== pl.uid) return pl;
+    const [x, y] = clamp(item(pl.item)!, st.x + (drag.px - st.px) / scale + (cam - st.cam), st.y + (drag.py - st.py) / scale);
+    return { x, y };
   };
   const onPointerUp = () => {
-    if (drag) save(p.room.map((r) => (r.uid === drag.uid ? { ...r, x: drag.x, y: drag.y } : r)));
+    if (drag) {
+      const moved = p.room.find((r) => r.uid === drag.uid);
+      if (moved) save(p.room.map((r) => (r === moved ? { ...r, ...pos(moved) } : r)));
+    }
     dragStart.current = null;
+    edge.current = 0;
     setDrag(null);
   };
+  const hold = (dir: number) => ({
+    onPointerDown: (e: PointerEvent) => (e.stopPropagation(), e.preventDefault(), (held.current = dir)),
+    onPointerUp: () => (held.current = 0),
+    onPointerLeave: () => (held.current = 0),
+    onPointerCancel: () => (held.current = 0),
+  });
 
   const sel = p.room.find((r) => r.uid === selected);
-  const pos = (pl: Placement) => (drag?.uid === pl.uid ? drag : pl);
   const sorted = [...p.room].sort((a, b) => layer(a) - layer(b) || pos(a).y - pos(b).y);
   const S = scale;
 
@@ -140,7 +226,8 @@ export function RoomScreen() {
   return (
     <main class="screen room-screen">
       <div class="room-box" ref={box}>
-        <div class="room" style={{ width: `${ROOM_W * S}px`, height: `${ROOM_H * S}px` }} onPointerDown={() => (setSelected(null), setHint(null))}>
+        <div class="room" ref={viewport} style={{ width: `${Math.round(view * S)}px`, height: `${Math.round(ROOM_H * S)}px` }} onPointerDown={() => (setSelected(null), setHint(null))}>
+         <div class="room-world" style={{ width: `${ROOM_W * S}px`, transform: `translateX(${-Math.round(cam * S)}px)` }}>
           <img class="px room-bg" src={spriteUrl('backgrounds/tower')} alt="" draggable={false} />
           {ready && win && <img class="px clutter" src={spriteUrl(win)} alt="" draggable={false} style={{ ...at(win, WINDOW_SPOT.x, WINDOW_SPOT.y), zIndex: 900, pointerEvents: 'none' }} />}
           {ready && sorted.map((pl) => {
@@ -163,15 +250,21 @@ export function RoomScreen() {
           })}
           {ready && clutter.map((c) => <ClutterImg key={c.sprite + c.x} c={c} S={S} at={at} onHint={setHint} />)}
           {ready && p.equipped.pet && (
-            <RoomPet key={p.equipped.pet} path={item(p.equipped.pet)!.sprite!} startX={PET_SPOT.x} floorY={PET_SPOT.y} scale={S} />
+            <RoomPet key={p.equipped.pet} path={item(p.equipped.pet)!.sprite!} startX={PET_SPOT.x} floorY={PET_SPOT.y} scale={S} follow={wizX} />
           )}
           {wizUrl && (
             <img
               class="px actor"
               src={wizUrl}
               alt=""
-              // Flipped so the wizard faces into the room.
-              style={{ transform: 'scaleX(-1)', left: `${(WIZARD_SPOT.x - (WIZ_CANVAS.w + 16 - WIZ.headX)) * S}px`, top: `${(WIZARD_SPOT.y - WIZ.feetY - WIZ.padTop) * S}px`, width: `${(WIZ_CANVAS.w + 16) * S}px`, zIndex: 2000 + WIZARD_SPOT.y }}
+              // The art faces right; mirror it around the head when walking left. Always in front of the furniture.
+              style={{
+                transform: walk.dir < 0 ? 'scaleX(-1)' : undefined,
+                left: `${(walk.x - (walk.dir < 0 ? WIZ_CANVAS.w + 16 - WIZ.headX : WIZ.headX)) * S}px`,
+                top: `${(WIZARD_SPOT.y - WIZ.feetY - WIZ.padTop - (walk.moving ? Math.round(Math.abs(Math.sin(walk.t * 10)) * 2) : 0)) * S}px`,
+                width: `${(WIZ_CANVAS.w + 16) * S}px`,
+                zIndex: 9000,
+              }}
             />
           )}
           {sel && !drag && (
@@ -186,6 +279,13 @@ export function RoomScreen() {
             <div class="room-hint" style={{ left: `${hint.x}px`, top: `${hint.y}px` }}>
               {hint.text}
             </div>
+          )}
+         </div>
+          {view < ROOM_W && (
+            <>
+              <button class="walk-btn left" title="Walk left" disabled={walk.x <= WALK_MARGIN} {...hold(-1)}>◀ A</button>
+              <button class="walk-btn right" title="Walk right" disabled={walk.x >= ROOM_W - WALK_MARGIN} {...hold(1)}>D ▶</button>
+            </>
           )}
         </div>
       </div>
@@ -218,7 +318,7 @@ export function RoomScreen() {
               );
             })}
         </div>
-        <p class="small muted tray-help">Tap to place. Drag to move.</p>
+        <p class="small muted tray-help">Tap to place. Drag to move. Walk with A and D.</p>
       </div>
     </main>
   );
