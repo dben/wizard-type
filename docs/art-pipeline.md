@@ -99,7 +99,7 @@ The key has a $10 monthly limit.
 
 | Date | Spent | What |
 | --- | --- | --- |
-| 2026-11-11 | ~$0.13 | Bed redrawn in side view (2 tries). |
+| 2026-11-11 | ~$0.20 | Bed redrawn from a lower angle (3 tries). |
 | 2026-11-10 | ~$0.37 | High-res map, wide room (2 tries), armchair redrawn from a lower angle. |
 | 2026-11-08 | ~$1.05 | Animations: 9 creature idle sheets, 6 pet sit/move sheets (owl and dragon redone as flying). |
 | 2026-11-08 | ~$1.14 | Second pass: 5 candidate wizard bases (try 3 kept) + 6 new hair edits, wide windows (2 tries), plants, knick-knacks, decor color variants, stemless mushroom hats. |
@@ -113,5 +113,5 @@ The key has a $10 monthly limit.
 - The mushroom lamp in `decor-a` kept a pink halo and is not exported.
 - `furniture-c` holds the armchair redrawn from a lower camera angle (`ref-armchair` is its reference). The `furniture-a` armchair cell is skipped.
 - The broken plate is exported at half size (`cellScale`).
-- `furniture-d` holds the bed redrawn in side view (`ref-bed` is its reference). The `furniture-a` bed cell is skipped.
+- `furniture-d` holds the bed redrawn from the foot end at eye level (`ref-bed` is its reference). A side view was tried and looked out of perspective with the floor. The `furniture-a` bed cell is skipped.
 - Windows are sliced with `resize: 1.2` (about 2.5 raw pixels per sprite pixel). Their art pixels are about 3 raw pixels, so going bigger would start to show.

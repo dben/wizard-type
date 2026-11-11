@@ -1,5 +1,5 @@
 {
-  "prompt": "Two versions of the cozy wooden bed with the colorful patchwork quilt from the reference image, one above the other with a wide gap, same colors, same quilt, same wood and same pixel style. Both are redrawn in SIDE VIEW (profile) from a low camera at eye level, like furniture in a side-scrolling platform game: the LONG side of the bed faces the viewer, so each bed is about twice as wide as it is tall. The tall upright headboard is at the LEFT end with a plump pillow leaning against it, a low footboard is at the RIGHT end, and the patchwork quilt lies flat along the mattress and hangs down the long side facing us. We do NOT look down on the bed: the top of the mattress is only a thin strip. Two short legs are visible, one under each end. The first one has a rounded headboard, the second one has tall bedposts with round knobs. No floor, no ground line, no rug, no shadow.",
+  "prompt": "Two versions of the cozy wooden bed with the colorful patchwork quilt from the reference image, side by side with a wide gap of empty background between them, same colors, same quilt, same wood and same pixel style. Both are redrawn from a LOW camera at eye level, like furniture in a side-scrolling game: seen straight on from the foot end, standing level on the floor. We look straight at the bed, NOT down on it: the patchwork quilt hangs down the front, the top of the mattress is only a thin strip, the headboard at the back is tall and upright with two plump pillows against it, and the legs stand on one straight horizontal line. The first one has a rounded headboard, the second one has tall bedposts. No floor, no ground line, no rug, no shadow under them.",
   "aspect": "16:9",
   "reference": [
     "ref-bed"
@@ -15,6 +15,6 @@
     "cells": [
       1
     ],
-    "width": 176
+    "height": 94
   }
 }
