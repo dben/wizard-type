@@ -13,7 +13,7 @@ import { ROOM_H, ROOM_W, WINDOW_SPOT, clutterFor, type StoryClutter } from '../c
 import { idleFrame, IDLE, petMotion } from '../content/world/animations';
 import { createRng } from '../game/rng';
 import { loadSprite, preload, sprite } from './sprites';
-import { WIZ, WIZ_CANVAS, drawWand, wandRest, wandTipAt } from './wizard';
+import { WALK_FPS, WIZ, WIZ_CANVAS, drawWand, walkFrames, wandRest, wandTipAt } from './wizard';
 
 export const VIEW_W = 480;
 export const VIEW_H = 200;
@@ -85,12 +85,14 @@ export class LessonScene {
   private last = 0;
   private raf = 0;
   private celebrating = false;
+  private walk: HTMLCanvasElement[];
 
   constructor(canvas: HTMLCanvasElement, private setup: SceneSetup) {
     canvas.width = VIEW_W * K;
     canvas.height = VIEW_H * K;
     this.ctx = canvas.getContext('2d')!;
     this.loc = LOCATIONS[setup.lesson.scene.location];
+    this.walk = walkFrames(setup.wizard);
     this.layoutTargets();
     this.layoutProps();
     this.camX = this.camGoal = this.camFor(this.targets[0]);
@@ -439,7 +441,9 @@ export class LessonScene {
   private drawWizard() {
     const c = this.ctx;
     const walking = Math.abs(this.camGoal - this.camX) > 2;
-    const bob = walking ? Math.round(Math.abs(Math.sin(this.time * 10)) * 2) : Math.sin(this.time * 2.2) > 0.4 ? 1 : 0;
+    // The walk frames lift the body themselves; standing still, the wizard breathes.
+    const bob = walking ? 0 : Math.sin(this.time * 2.2) > 0.4 ? 1 : 0;
+    const body = walking ? this.walk[Math.floor(this.time * WALK_FPS) % this.walk.length] : this.setup.wizard;
     const jump = Math.round(Math.sin(this.jump * Math.PI) * 14);
     const top = GROUND - WIZ.feetY - WIZ.padTop - bob - jump;
     const left = WIZ_X - WIZ.headX;
@@ -457,7 +461,7 @@ export class LessonScene {
     }
     c.fillStyle = 'rgba(0,0,0,0.15)';
     c.fillRect(WIZ_X - 22, GROUND - 2, 44, 3);
-    c.drawImage(this.setup.wizard, left, top, WIZ_CANVAS.w, WIZ_CANVAS.h);
+    c.drawImage(body, left, top, WIZ_CANVAS.w, WIZ_CANVAS.h);
 
     const wand = sprite(this.setup.wand);
     if (wand) drawWand(c, wand, left + WIZ.handX, top + WIZ.padTop + WIZ.handY, this.wandAngle(), !!this.setup.staff);

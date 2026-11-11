@@ -17,8 +17,8 @@ import { chooseWindow, isDone, roomClutter, windowSprite } from '../../game/prog
 import type { Placement } from '../../game/save';
 import { layer } from '../../render/scene';
 import { loadSprite, sprite, spriteUrl } from '../../render/sprites';
-import { portraitUrl } from '../../render/portrait';
-import { WIZ, WIZ_CANVAS } from '../../render/wizard';
+import { walkUrls } from '../../render/portrait';
+import { WALK_FPS, WIZ, WIZ_CANVAS } from '../../render/wizard';
 import { Sprite } from '../components/Sprite';
 import { RoomPet } from '../components/RoomPet';
 import { useIdleFrame } from '../components/useAnim';
@@ -71,7 +71,7 @@ export function RoomScreen() {
   const [walk, setWalk] = useState({ x: WIZARD_SPOT.x, dir: 1, t: 0, moving: false });
   const [ready, setReady] = useState(false);
   const [hint, setHint] = useState<{ x: number; y: number; text: string } | null>(null);
-  const [wizUrl, setWizUrl] = useState<string>();
+  const [wiz, setWiz] = useState<{ stand: string; walk: string[] }>();
   const box = useRef<HTMLDivElement>(null);
   const viewport = useRef<HTMLDivElement>(null);
   const dragStart = useRef<{ px: number; py: number; x: number; y: number; cam: number } | null>(null);
@@ -93,7 +93,7 @@ export function RoomScreen() {
     }
     paths.push(...clutter.flatMap((c) => IDLE[c.sprite]?.frames ?? []));
     void Promise.all(paths.map((s) => loadSprite(s).catch(() => undefined))).then(() => setReady(true));
-    void portraitUrl(p.look, p.equipped).then(setWizUrl);
+    void walkUrls(p.look, p.equipped).then(setWiz);
   }, []);
 
   useEffect(() => {
@@ -252,16 +252,16 @@ export function RoomScreen() {
           {ready && p.equipped.pet && (
             <RoomPet key={p.equipped.pet} path={item(p.equipped.pet)!.sprite!} startX={PET_SPOT.x} floorY={PET_SPOT.y} scale={S} follow={wizX} />
           )}
-          {wizUrl && (
+          {wiz && (
             <img
               class="px actor"
-              src={wizUrl}
+              src={walk.moving ? wiz.walk[Math.floor(walk.t * WALK_FPS) % wiz.walk.length] : wiz.stand}
               alt=""
               // The art faces right; mirror it around the head when walking left. Always in front of the furniture.
               style={{
                 transform: walk.dir < 0 ? 'scaleX(-1)' : undefined,
                 left: `${(walk.x - (walk.dir < 0 ? WIZ_CANVAS.w + 16 - WIZ.headX : WIZ.headX)) * S}px`,
-                top: `${(WIZARD_SPOT.y - WIZ.feetY - WIZ.padTop - (walk.moving ? Math.round(Math.abs(Math.sin(walk.t * 10)) * 2) : 0)) * S}px`,
+                top: `${(WIZARD_SPOT.y - WIZ.feetY - WIZ.padTop) * S}px`,
                 width: `${(WIZ_CANVAS.w + 16) * S}px`,
                 zIndex: 9000,
               }}

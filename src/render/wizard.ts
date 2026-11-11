@@ -21,9 +21,44 @@ export const WIZ = {
   handX: 73,
   handY: 42,
   feetY: 90,
+  /** The boots: everything from this row down, split into back and front boot at bootSplit. */
+  bootTop: 83,
+  bootSplit: 48,
 } as const;
 
 export const WIZ_CANVAS = { w: WIZ.size, h: WIZ.size + WIZ.padTop };
+
+/** Walk cycle: where the [back, front] boot goes in each frame, and how far the body lifts. */
+const STEPS: { boots: [dx: number, dy: number][]; lift: number }[] = [
+  { boots: [[3, 0], [-3, 0]], lift: 0 },
+  { boots: [[1, 0], [-1, -3]], lift: 1 },
+  { boots: [[-3, 0], [3, 0]], lift: 0 },
+  { boots: [[-1, -3], [1, 0]], lift: 1 },
+];
+export const WALK_FPS = 8;
+
+/**
+ * Walking frames made from a finished wizard: the two boots are cut out and
+ * stepped back and forth under the robe, which hides a lifted boot's top.
+ * No extra art, so it works for every hair style, robe and hat.
+ */
+export function walkFrames(wizard: HTMLCanvasElement): HTMLCanvasElement[] {
+  const top = WIZ.padTop + WIZ.bootTop;
+  const h = wizard.height - top;
+  return STEPS.map((step) => {
+    const c = document.createElement('canvas');
+    c.width = wizard.width;
+    c.height = wizard.height;
+    const ctx = c.getContext('2d')!;
+    ctx.imageSmoothingEnabled = false;
+    [[0, WIZ.bootSplit], [WIZ.bootSplit, wizard.width - WIZ.bootSplit]].forEach(([x, w], i) => {
+      const [dx, dy] = step.boots[i];
+      ctx.drawImage(wizard, x, top, w, h, x + dx, top + dy, w, h);
+    });
+    ctx.drawImage(wizard, 0, 0, wizard.width, top, 0, -step.lift, wizard.width, top);
+    return c;
+  });
+}
 
 /** Where the hand holds a wand sprite, measured from its pixels. */
 interface WandGrip {
