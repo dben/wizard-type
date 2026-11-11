@@ -54,6 +54,8 @@ export function walkFrames(wizard: HTMLCanvasElement): HTMLCanvasElement[] {
     [[0, WIZ.bootSplit], [WIZ.bootSplit, wizard.width - WIZ.bootSplit]].forEach(([x, w], i) => {
       const [dx, dy] = step.boots[i];
       ctx.drawImage(wizard, x, top, w, h, x + dx, top + dy, w, h);
+      // When the body lifts, stretch the boot's top row up so no gap opens under the hem.
+      for (let k = 1; k <= step.lift; k++) ctx.drawImage(wizard, x, top, w, 1, x + dx, top + dy - k, w, 1);
     });
     ctx.drawImage(wizard, 0, 0, wizard.width, top, 0, -step.lift, wizard.width, top);
     return c;
