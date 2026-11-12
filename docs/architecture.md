@@ -68,7 +68,7 @@ The two backgrounds are the exception: `tower.png` (2064 × 512) and `map.png` (
 
 - `content/world/animations.ts` lists frames by naming convention: creature idle loops (`IDLE`, keyed by the still sprite) and pet motion (`petMotion()`: sitting sprite plus move frames, and whether the species walks, hops or flies).
 - The lesson scene swaps in the idle frame for any target that has one, and the pet sits while the wizard casts and moves along when the wizard walks.
-- In the room, `RoomPet` runs a small loop: sit for 3 to 8 seconds, pick a spot on the floor near the wizard, travel there (flipped when going left), sit again. Tapping it makes it hop. Clutter creatures and the lesson intro picture use `useIdleFrame()`.
+- In the room, `RoomPet` runs a small loop: sit for 3 to 8 seconds, pick a spot on the floor near the wizard, travel there (flipped when going left), sit again. Tapping it makes it hop. The lesson intro picture uses `useIdleFrame()`.
 - The wizard's walk has no extra art. `walkFrames()` in `render/wizard.ts` cuts the two boots out of the finished wizard and steps them back and forth under the robe (4 frames, 8 per second), lifting the body 1 px on the passing steps. Used when walking in the room and when the lesson view pans. The boot rows and split column are in `WIZ`; check them if the bases are re-sliced.
 - Frames of one animation can differ by a few pixels in size; everything is drawn from the bottom-center, so the feet stay put.
 

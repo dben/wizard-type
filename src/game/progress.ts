@@ -6,7 +6,7 @@
 import { LESSONS, lessonInfo } from '../content/curriculum';
 import { ITEMS, item } from '../content/items';
 import type { ItemDef } from '../content/types';
-import { GIFT_SPOTS, STORY_CLUTTER } from '../content/world/room';
+import { GIFT_SPOTS, STORY_CLUTTER, isCreature } from '../content/world/room';
 import type { Placement, Profile } from './save';
 import { payout, type LessonScore, type Payout } from './scoring';
 
@@ -94,8 +94,8 @@ export function equip(p: Profile, itemId: string | null, slot: keyof Profile['eq
   return { ...p, equipped: { ...p.equipped, [slot]: itemId } };
 }
 
-/** Clutter still lying around the room. */
-export const roomClutter = (p: Profile) => STORY_CLUTTER.filter((c) => !isDone(p, c.until));
+/** Mess and broken things still in the room. Creatures are left out: they appear in their lessons. */
+export const roomClutter = (p: Profile) => STORY_CLUTTER.filter((c) => !isCreature(c) && !isDone(p, c.until));
 
 /** The big window's sprite, or null while it's still broken (the clutter shows the broken one). */
 export const windowSprite = (p: Profile) => (isDone(p, 'fix-window') ? (item(p.window)?.sprite ?? 'windows/meadow') : null);
