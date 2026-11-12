@@ -26,5 +26,13 @@
   "grid": [
     2,
     3
+  ],
+  "flip": [
+    "ghost-grumpy",
+    "ghost-grumpy-2",
+    "ghost-grumpy-3",
+    "ghost-happy",
+    "ghost-happy-2",
+    "ghost-happy-3"
   ]
 }

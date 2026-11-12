@@ -21,8 +21,7 @@ import { walkUrls } from '../../render/portrait';
 import { WALK_FPS, WIZ, WIZ_CANVAS } from '../../render/wizard';
 import { Sprite } from '../components/Sprite';
 import { RoomPet } from '../components/RoomPet';
-import { useIdleFrame } from '../components/useAnim';
-import { IDLE, petMotion } from '../../content/world/animations';
+import { petMotion } from '../../content/world/animations';
 import { Button } from '../components/bits';
 
 const TABS: { cat: ItemCategory; label: string }[] = [
@@ -91,7 +90,6 @@ export function RoomScreen() {
       const pet = item(p.equipped.pet)!.sprite!;
       paths.push(pet, ...(petMotion(pet)?.move ?? []));
     }
-    paths.push(...clutter.flatMap((c) => IDLE[c.sprite]?.frames ?? []));
     void Promise.all(paths.map((s) => loadSprite(s).catch(() => undefined))).then(() => setReady(true));
     void walkUrls(p.look, p.equipped).then(setWiz);
   }, []);
@@ -326,14 +324,13 @@ export function RoomScreen() {
 
 function ClutterImg({ c, S, at, onHint }: { c: StoryClutter; S: number; at: (path: string, x: number, y: number) => Record<string, string>; onHint: (h: { x: number; y: number; text: string }) => void }) {
   const info = lessonInfo(c.until);
-  const frame = useIdleFrame(c.sprite, c.x);
   return (
     <img
       class="px clutter"
-      src={spriteUrl(frame)}
+      src={spriteUrl(c.sprite)}
       alt=""
       draggable={false}
-      style={{ ...at(frame, c.x, c.y), zIndex: 2000 + c.y }}
+      style={{ ...at(c.sprite, c.x, c.y), zIndex: 2000 + c.y }}
       onPointerDown={(e) => {
         e.stopPropagation();
         sfx.oops();

@@ -62,7 +62,7 @@ Replaying lesson 1 forever earns about 9 gold a run, so grinding is slow. The re
 
 - A long hall, about two screens wide, with a door at the left end and a fireplace at the right. The wizard walks with A and D (or the arrow keys, or the buttons in the corners) and the view follows. The wizard is always drawn in front.
 - Starts dusty: dust piles, dust bunnies, cobwebs, a grumpy spider, broken chair, table, bookshelf, a boarded-up window, a cauldron, and a mouse.
-- Each piece of clutter belongs to one lesson (`src/content/world/room.ts`) and disappears when that lesson is done. Tapping clutter says which lesson fixes it.
+- Each piece of clutter belongs to one lesson (`src/content/world/room.ts`) and disappears when that lesson is done. Tapping clutter says which lesson fixes it. The spider and mouse are not shown in the room; they appear in their own lessons.
 - Tower lessons show the real room: the kid's furniture, the window, and every unfinished mess greyed out. The lesson's own mess is in full color, standing in the same spot, and is what the spells hit. The view pans along the hall from one target to the next. The spider and mouse only appear in their own lessons.
 - The big window is part of the wall. Fixing it gives the Meadow Window; other styles (sunset, mountains, frosty, starry) come from the shop and are switched in the room's Window tab.
 - Kids place owned furniture, little things, wall hangings and rugs by tapping, then drag to move. New things land in the middle of the view; dragging to the edge of the view walks that way. Rugs draw under everything, little things draw on top of furniture, wall hangings always sit in front of the window.

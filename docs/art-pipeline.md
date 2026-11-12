@@ -64,6 +64,7 @@ What the slicer does: removes magenta and magenta-tinted fringe, shrinks by `sca
 | `cropBottom` | Cut this fraction off the bottom of every sprite (mushroom stems). |
 | `flip` | `[name, ...]` mirror these sprites. For characters the model drew facing the wrong way. |
 | `squash` | `{name: {"band": [y0, y1], "factor": 0.5}}` squash those rows to lower the camera angle (see below). |
+| `stripHalo` | `[name, ...]` remove a bright painted glow around these sprites, up to their dark outline (lit lantern). |
 | `cutBottomOval` | `[wfrac, hfrac]` cut an outlined oval out of the bottom so a head shows through (mushroom caps use `[0.68, 0.16]`). |
 | `kind: "background"` + `out` + `size` | Full-image backgrounds instead of sprite sheets. `size` is the output in pixels; the raw image is `size × scale`. |
 
@@ -121,14 +122,15 @@ The key has a $10 monthly limit.
 
 ## Known art issues
 
-- `village/lantern` has no "lit" sprite; the glow is drawn in code.
+- The lit lantern was drawn with a peach halo. `stripHalo` removes it and the game draws its own glow behind `village/lantern-lit`.
 - The first window sheet also had stained-glass and flower-box styles, but it was regenerated wider and those are gone. Generate a `windows-b` sheet to add more styles.
 - The hats sheet's mushroom (with stem) is skipped; mushroom hats come from `hats-b`.
 - The mushroom lamp in `decor-a` kept a pink halo and is not exported.
 - `furniture-c` holds the armchair redrawn from a lower camera angle (`ref-armchair` is its reference). The `furniture-a` armchair cell is skipped.
 - The broken plate is exported at half size (`cellScale`).
 - `furniture-d` holds the bed redrawn from the foot end at eye level (`ref-bed` is its reference). A side view was tried and looked out of perspective with the floor. The `furniture-a` bed cell is skipped.
-- The round table, writing desk, potion table, fixed wagon and flower beds were drawn from a high angle and are flattened with `squash`.
+- The round table, writing desk, potion table, fixed wagon, flower beds and bridge were drawn from a high angle and are flattened with `squash`.
 - `village-b` holds the broken wagon redrawn as an edit of the fixed one (`ref-wagon` is its reference): front wheel gone, front corner resting on the ground. Only the first of its six drawings is used. The ones with a loose wheel put it below the wagon, which made the wagon float above the ground line. The `village-a` broken wagon cell is skipped.
+- Two grumpy bulldog frames, five goose frames and every golem and ghost frame came out facing right and are mirrored with `flip`. Check facing on every new animation sheet.
 - The model drew most villagers facing right. All but the farmer (who faces front) are mirrored with `flip`.
 - Windows are sliced with `resize: 1.2` (about 2.5 raw pixels per sprite pixel). Their art pixels are about 3 raw pixels, so going bigger would start to show.

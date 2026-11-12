@@ -53,7 +53,7 @@ export const STORY_CLUTTER: StoryClutter[] = [
   { sprite: 'creatures/mouse-grumpy', x: 700, y: 244, until: 'mouse' },
 ];
 
-/** Creatures only appear in the room, not greyed out in other lessons. */
+/** Creatures only show up in their own lesson, never in the room. */
 export const isCreature = (c: StoryClutter) => c.sprite.startsWith('creatures/');
 
 export const clutterFor = (lessonId: string) => STORY_CLUTTER.filter((c) => c.until === lessonId);

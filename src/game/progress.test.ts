@@ -35,6 +35,12 @@ describe('progress', () => {
     expect(roomClutter(p).some((c) => c.sprite === 'fixtures/chair-broken')).toBe(false);
   });
 
+  it('keeps creatures out of the room', () => {
+    const clutter = roomClutter(newProfile('Ada', look));
+    expect(clutter.some((c) => c.sprite === 'fixtures/chair-broken')).toBe(true);
+    expect(clutter.some((c) => c.sprite.startsWith('creatures/'))).toBe(false);
+  });
+
   it('equips the first pet automatically', () => {
     const p = finishLesson(newProfile('Ada', look), 'spider', score(1)).profile;
     expect(p.equipped.pet).toBe('pet-kitten');

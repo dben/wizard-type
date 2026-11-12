@@ -17,7 +17,7 @@
     "fence-broken",
     "fence-fixed",
     "lantern",
-    null,
+    "lantern-lit",
     "scarecrow-sad",
     "scarecrow-happy"
   ],
@@ -50,5 +50,8 @@
       ],
       "factor": 0.6
     }
-  }
+  },
+  "stripHalo": [
+    "lantern-lit"
+  ]
 }

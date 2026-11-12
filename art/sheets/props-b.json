@@ -16,5 +16,14 @@
     "bridge",
     "cliff",
     "stone-hut"
-  ]
+  ],
+  "squash": {
+    "bridge": {
+      "band": [
+        18,
+        38
+      ],
+      "factor": 0.4
+    }
+  }
 }

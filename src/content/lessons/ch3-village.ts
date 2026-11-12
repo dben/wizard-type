@@ -67,9 +67,9 @@ export const chapter3: ChapterDef = {
         mode: 'chore',
         npc: 'villagers/grandpa',
         targets: [
-          { sprite: 'village/lantern', done: 'village/lantern', glow: true },
-          { sprite: 'village/lantern', done: 'village/lantern', glow: true },
-          { sprite: 'village/lantern', done: 'village/lantern', glow: true },
+          { sprite: 'village/lantern', done: 'village/lantern-lit', glow: true },
+          { sprite: 'village/lantern', done: 'village/lantern-lit', glow: true },
+          { sprite: 'village/lantern', done: 'village/lantern-lit', glow: true },
         ],
       },
       recipes: [

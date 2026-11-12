@@ -38,7 +38,7 @@ src/content  (data)  ──►  src/game  (pure rules)  ──►  src/ui + src/
 
 - Logical size 480 × 200, drawn at 2× into the canvas and scaled with CSS (`image-rendering: pixelated`).
 - Indoor (tower): the room is 1032 × 256, wider than the view, so the camera pans to each target and stops at the side walls. The view shows the bottom 200 rows. Painted background, the chosen window, the kid's own room decorations, other lessons' mess greyed out, and this lesson's targets standing where its mess is in the room (`clutterFor()` in `content/world/room.ts`).
-- Outdoor: sky gradient, two procedural hill lines, hazy far props (parallax 0.55), ground strip, near props. Targets are spaced 240 px apart and the camera pans to the next one when a target is done, so the wizard appears to walk.
+- Outdoor: sky gradient, two procedural hill lines, hazy far props (parallax 0.55), ground strip, near props. Targets are spaced 180 px apart (a finished one stays in view beside the wizard) and the camera pans to the next one when a target is done, so the wizard appears to walk.
 - Spells are shared evenly across a lesson's targets. Battles have a single target with a heart meter.
 
 ## Sizes and pixel scale
@@ -68,7 +68,7 @@ The two backgrounds are the exception: `tower.png` (2064 × 512) and `map.png` (
 
 - `content/world/animations.ts` lists frames by naming convention: creature idle loops (`IDLE`, keyed by the still sprite) and pet motion (`petMotion()`: sitting sprite plus move frames, and whether the species walks, hops or flies).
 - The lesson scene swaps in the idle frame for any target that has one, and the pet sits while the wizard casts and moves along when the wizard walks.
-- In the room, `RoomPet` runs a small loop: sit for 3 to 8 seconds, pick a spot on the floor near the wizard, travel there (flipped when going left), sit again. Tapping it makes it hop. Clutter creatures and the lesson intro picture use `useIdleFrame()`.
+- In the room, `RoomPet` runs a small loop: sit for 3 to 8 seconds, pick a spot on the floor near the wizard, travel there (flipped when going left), sit again. Tapping it makes it hop. The lesson intro picture uses `useIdleFrame()`.
 - The wizard's walk has no extra art. `walkFrames()` in `render/wizard.ts` cuts the two boots out of the finished wizard and steps them back and forth under the robe (4 frames, 8 per second), lifting the body 1 px on the passing steps. Used when walking in the room and when the lesson view pans. The boot rows and split column are in `WIZ`; check them if the bases are re-sliced.
 - Frames of one animation can differ by a few pixels in size; everything is drawn from the bottom-center, so the feet stay put.
 
