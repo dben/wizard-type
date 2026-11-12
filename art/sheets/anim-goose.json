@@ -26,5 +26,12 @@
   "grid": [
     2,
     3
+  ],
+  "flip": [
+    "goose-grumpy-2",
+    "goose-grumpy-3",
+    "goose-happy",
+    "goose-happy-2",
+    "goose-happy-3"
   ]
 }

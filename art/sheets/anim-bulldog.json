@@ -26,5 +26,9 @@
   "grid": [
     2,
     3
+  ],
+  "flip": [
+    "bulldog-grumpy-2",
+    "bulldog-grumpy-3"
   ]
 }
