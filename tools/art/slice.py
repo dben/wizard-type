@@ -28,6 +28,7 @@ Sheet spec fields used here:
     trim      false keeps the whole frame instead of cropping (for layered sprites)
     flip      [name, ...] mirror these sprites (the model drew them facing the wrong way)
     squash    {name: {...}} flatten a top face drawn from too high up (see squash.py)
+    stripHalo [name, ...] remove a painted glow around these sprites (the game draws its own)
 Background-only fields:
     out       output path under public/sprites, e.g. "backgrounds/tower.png"
     crop      [x, y, w, h] in source pixels before scaling
@@ -135,6 +136,23 @@ def fill_holes(rgb: np.ndarray, alpha: np.ndarray):
     rgb = rgb.copy()
     rgb[holes] = shade
     return rgb, alpha | holes
+
+
+def strip_halo(rgb: np.ndarray, alpha: np.ndarray, min_luma: int = 120):
+    """Remove a bright painted glow: light pixels reachable from outside without crossing the outline."""
+    h, w = alpha.shape
+    luma = rgb[..., 0] * 0.299 + rgb[..., 1] * 0.587 + rgb[..., 2] * 0.114
+    passable = ~alpha | (luma > min_luma)
+    seen = np.zeros_like(alpha)
+    stack = [(y, x) for y in range(h) for x in (0, w - 1)] + [(y, x) for x in range(w) for y in (0, h - 1)]
+    while stack:
+        y, x = stack.pop()
+        if 0 <= y < h and 0 <= x < w and not seen[y, x] and passable[y, x]:
+            seen[y, x] = True
+            stack += [(y + 1, x), (y - 1, x), (y, x + 1), (y, x - 1)]
+    alpha = alpha & ~seen
+    ys, xs = np.nonzero(alpha)
+    return rgb[ys.min():ys.max() + 1, xs.min():xs.max() + 1], alpha[ys.min():ys.max() + 1, xs.min():xs.max() + 1]
 
 
 def cut_bottom_oval(im: Image.Image, wfrac: float, hfrac: float) -> Image.Image:
@@ -289,6 +307,8 @@ def slice_sheet(sheet_id: str, preview_only: bool) -> None:
         elif spec.get("trim", True):
             a = alpha[y0:y1, x0:x1] & (labels[y0:y1, x0:x1] == lab)
             c = color[y0:y1, x0:x1]
+            if cells[k] in spec.get("stripHalo", []):
+                c, a = strip_halo(c, a)
             if spec.get("fillHoles"):
                 c, a = fill_holes(c, a)
             im = clean_sprite(c, a, spec.get("colors", 32))

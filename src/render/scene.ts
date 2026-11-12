@@ -20,8 +20,13 @@ export const VIEW_H = 200;
 const K = 2; // canvas pixels per scene pixel
 const GROUND = 186;
 const WIZ_X = 92;
-const TARGET_GAP = 240;
+/** Less than the wizard-to-target distance, so a finished target ends up between the wizard and the next one, not behind the wizard. */
+const TARGET_GAP = 180;
 const FIRST_TARGET_X = 330;
+/** The stream is narrower than the bridge deck, so both ends of the bridge rest on the banks. */
+const STREAM_W = 64;
+/** How far the bridge's posts reach below the ground line; this puts its deck level with the path. */
+const BRIDGE_DROP = 26;
 const ROOM_SHIFT = VIEW_H - ROOM_H; // the room is taller than the view; show its bottom part
 
 interface TargetState {
@@ -374,12 +379,20 @@ export class LessonScene {
     for (let x = -mod(this.camX, 13); x < VIEW_W; x += 13) c.fillRect(Math.round(x), GROUND + 3, 3, 1);
 
     if (L.river) {
-      const rx = this.targets[0].x - this.camX;
+      // A stream runs toward the viewer and the bridge carries the path over it.
+      const rx = Math.round(this.targets[0].x - this.camX);
+      const half = STREAM_W / 2;
+      const top = GROUND - 8;
+      c.fillStyle = '#3f7f3a';
+      c.fillRect(rx - half - 2, top, STREAM_W + 4, VIEW_H);
       c.fillStyle = '#4f9fe0';
-      c.fillRect(rx - 80, GROUND - 4, 160, VIEW_H);
+      c.fillRect(rx - half, top, STREAM_W, VIEW_H);
       c.fillStyle = '#9fd6ff';
-      for (let i = 0; i < 6; i++) c.fillRect(rx - 70 + i * 26 + Math.round(Math.sin(this.time * 2 + i) * 3), GROUND + 6 + (i % 2) * 4, 8, 1);
-      this.drawSprite('props/bridge', rx, GROUND + 10, {});
+      for (let i = 0; i < 5; i++) {
+        const y = top + 2 + mod(i * 5 + this.time * 6, VIEW_H - top - 2);
+        c.fillRect(rx - half + 6 + ((i * 23) % (STREAM_W - 18)), Math.round(y), 6, 1);
+      }
+      this.drawSprite('props/bridge', rx, GROUND + BRIDGE_DROP, {});
     }
     for (const p of this.props.near) this.drawSprite(p.s, p.x - this.camX, GROUND - 3, {});
   }
@@ -410,7 +423,7 @@ export class LessonScene {
 
     if (t.done && t.def.glow) {
       const img = sprite(s);
-      const gy = y - (img?.height ?? 40) + 12;
+      const gy = y - Math.round((img?.height ?? 40) * 0.7); // the lamp sits near the top
       const r = 26 + Math.sin(this.time * 4) * 2;
       const g = c.createRadialGradient(x, gy, 2, x, gy, r);
       g.addColorStop(0, 'rgba(255,190,60,0.95)');

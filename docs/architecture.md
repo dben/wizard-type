@@ -38,7 +38,7 @@ src/content  (data)  ──►  src/game  (pure rules)  ──►  src/ui + src/
 
 - Logical size 480 × 200, drawn at 2× into the canvas and scaled with CSS (`image-rendering: pixelated`).
 - Indoor (tower): the room is 1032 × 256, wider than the view, so the camera pans to each target and stops at the side walls. The view shows the bottom 200 rows. Painted background, the chosen window, the kid's own room decorations, other lessons' mess greyed out, and this lesson's targets standing where its mess is in the room (`clutterFor()` in `content/world/room.ts`).
-- Outdoor: sky gradient, two procedural hill lines, hazy far props (parallax 0.55), ground strip, near props. Targets are spaced 240 px apart and the camera pans to the next one when a target is done, so the wizard appears to walk.
+- Outdoor: sky gradient, two procedural hill lines, hazy far props (parallax 0.55), ground strip, near props. Targets are spaced 180 px apart (a finished one stays in view beside the wizard) and the camera pans to the next one when a target is done, so the wizard appears to walk.
 - Spells are shared evenly across a lesson's targets. Battles have a single target with a heart meter.
 
 ## Sizes and pixel scale

@@ -43,7 +43,7 @@ A lesson can only ask for keys introduced in it or earlier lessons. Uppercase le
 | --- | --- |
 | `sprite` | What the spells hit. |
 | `done` | Sprite after the last hit. Leave out to make it vanish. |
-| `glow` | Warm glow when done (lanterns). |
+| `glow` | Warm glow behind the `done` sprite (lanterns). |
 | `helper` | Sprite that swoops in when done (the broom). |
 
 Spells are shared evenly across targets. Battles use one target with a `-grumpy` and a `-happy` sprite.
