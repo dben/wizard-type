@@ -131,6 +131,6 @@ The key has a $10 monthly limit.
 - `furniture-d` holds the bed redrawn from the foot end at eye level (`ref-bed` is its reference). A side view was tried and looked out of perspective with the floor. The `furniture-a` bed cell is skipped.
 - The round table, writing desk, potion table, fixed wagon, flower beds and bridge were drawn from a high angle and are flattened with `squash`.
 - `village-b` holds the broken wagon redrawn as an edit of the fixed one (`ref-wagon` is its reference): front wheel gone, front corner resting on the ground. Only the first of its six drawings is used. The ones with a loose wheel put it below the wagon, which made the wagon float above the ground line. The `village-a` broken wagon cell is skipped.
-- Two grumpy bulldog frames and five goose frames came out facing right and are mirrored with `flip`. Check facing on every new animation sheet.
+- Two grumpy bulldog frames, five goose frames and every golem and ghost frame came out facing right and are mirrored with `flip`. Check facing on every new animation sheet.
 - The model drew most villagers facing right. All but the farmer (who faces front) are mirrored with `flip`.
 - Windows are sliced with `resize: 1.2` (about 2.5 raw pixels per sprite pixel). Their art pixels are about 3 raw pixels, so going bigger would start to show.
